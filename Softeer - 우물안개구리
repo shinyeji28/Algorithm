@@ -1,0 +1,57 @@
+
+/*
+  N명 (1~N번호가 부여)
+  M: 관계
+  i번이 관계한 사람보다 들 수 있는 무게가 높으면 최고라고 생각
+
+  출력>
+  자신이 최고라고 생각하는 회원은 몇 명인가?
+
+  구현>
+  1. 네트워크를 그래프로 저장 (무방향 그래프)
+  2. 1~N 반복하여 이웃노드 중 자신의 무게가 가장 높다면 최고라고 판단
+  
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static List<Integer>[] graph;
+    public static void main(String[] args) throws IOException{
+
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+      StringTokenizer st = new StringTokenizer(br.readLine());
+      int n = Integer.parseInt(st.nextToken());
+      int m = Integer.parseInt(st.nextToken());
+      
+      graph = new ArrayList[n+1];
+      int[] weight = new int[n+1]; 
+              
+      st = new StringTokenizer(br.readLine());
+      for(int i=1;i<=n;i++){
+        graph[i] = new ArrayList<Integer>();
+        weight[i] = Integer.parseInt(st.nextToken());
+      }
+
+      for(int i=0;i<m;i++){
+        st = new StringTokenizer(br.readLine());
+        int from = Integer.parseInt(st.nextToken());
+        int to = Integer.parseInt(st.nextToken());
+        graph[from].add(to);
+        graph[to].add(from);
+      }
+
+      int result = 0;
+      A: for(int i=1;i<=n;i++){
+        for(int to: graph[i]){
+          if(weight[i] <= weight[to]){
+            continue A;
+          }
+        }
+        result++;
+      }
+      System.out.println(result);
+    }
+
+}
