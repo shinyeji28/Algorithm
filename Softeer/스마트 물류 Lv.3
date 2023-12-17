@@ -1,0 +1,47 @@
+/*
+  로봇의 왼쪽 부품을 먼저 선택한다 - 그리디
+
+  queue에 부품의 idx저장
+  for문을 돌며 queue.peek의 값이 i-k or i+K 범위 안에 들면 pop후 result+1 
+*/
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+      StringTokenizer st = new StringTokenizer(br.readLine());
+      int N = Integer.parseInt(st.nextToken());
+      int K = Integer.parseInt(st.nextToken());
+      char[] arr = new char[N];
+      Queue<Integer> q = new ArrayDeque<>();
+      st = new StringTokenizer(br.readLine());
+      String str = st.nextToken();
+      for(int i=0;i<N;i++){
+        arr[i] = str.charAt(i);
+        if(arr[i]=='H'){
+          q.offer(i);
+        }
+      }      
+
+      int result = 0;
+
+      A : for(int i=0;i<N;i++){
+        while(q.peek()<i-K){
+          q.poll();
+          if(q.isEmpty()) break A;
+        }
+        if(arr[i] == 'P' && q.peek() >=i-K && q.peek() <= i+K){
+
+          q.poll();
+          result++;
+          if(q.isEmpty()) break A;
+        }
+      }
+      
+      System.out.println(result);
+    }
+}
