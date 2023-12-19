@@ -1,0 +1,79 @@
+/*
+  N레일 (같은 무게 레일 없음) - 각 레일은 Ni무게 전용
+  레일 순서대로 담으면서 바구니 무게(M)를 넘지 않아야함
+  바구니에 담아 이동하면 1번 일한 것
+
+  출력>
+  레일 순서를 조작해 K번 일하는데 최소한의 무게만 들 수 있도록 하여 총 무게를 구하기
+
+  구현>
+  레일 순서 순열로 나열
+  백트래킹 - 무게 재기
+*/
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static int[] pick;
+    static boolean[] visited;
+    static int N,M,K;
+    static int[] rail;
+    static int minWeight = Integer.MAX_VALUE;
+    public static void main(String[] args) throws IOException {
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+      StringTokenizer st = new StringTokenizer(br.readLine());
+      N = Integer.parseInt(st.nextToken());
+      M = Integer.parseInt(st.nextToken());
+      K = Integer.parseInt(st.nextToken());
+
+      rail = new int[N];
+      pick = new int[N];
+      visited = new boolean[N];
+      st = new StringTokenizer(br.readLine());
+      for(int i=0;i<N;i++){
+        rail[i] = Integer.parseInt(st.nextToken());
+      }
+
+      permutation(0 ,0, 0,0);
+      System.out.println(minWeight);
+    }
+    public static void permutation(int depth, int weight, int moveCnt, int totalW){
+      if(minWeight <= totalW)return;
+
+      if(depth == N){
+        if(moveCnt!=K){
+          int cnt = moveCnt;
+          int i = 0;
+          while(cnt != K){
+            if(minWeight <= totalW)return;
+            if(weight + pick[i] > M) {
+              totalW += weight;
+              weight = pick[i];
+              if(minWeight <= totalW)return;
+              cnt++;
+            }else{
+              weight+=pick[i];
+            }
+            i = (i+1)%N ;
+          }
+        }
+        minWeight = Math.min(minWeight, totalW);
+        // System.out.println(totalW);
+        return;
+      }
+      
+      for(int i=0;i<N;i++){
+        if(visited[i])continue;
+        pick[depth] = rail[i];
+        visited[i] = true;
+        if(weight + rail[i] > M) {
+          permutation(depth+1, rail[i], moveCnt+1, totalW + weight);
+        }else{
+          permutation(depth+1, weight + rail[i], moveCnt, totalW );
+        }
+        visited[i] = false;
+      }
+    }
+}
