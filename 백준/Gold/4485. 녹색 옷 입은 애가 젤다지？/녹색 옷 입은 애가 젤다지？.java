@@ -3,10 +3,9 @@
  * 도둑루피 - 루피 감소
  * [N-1],[N-1]까지 이동 했을 때 최소로 잃는 금액 구하기
  * 
- * 1. 양의 가중치가 있는 최소 비용 구하기 - 다익스트라
  * 
  * 구현
- * 2. bfs  - 0,0에서 각 위치마다의 최소 비용 저장 
+ * 양의 가중치가 있는 최소 비용 구하기 - 다익스트라  
  *         
  *
  */
@@ -17,7 +16,7 @@ public class Main {
 	static int[] dx = new int[] {0,0,-1,1};
 	static int[] dy = new int[] {-1,1,0,0};
 	static int[][] map;
-	static int[][] weight;
+	static boolean[][] visited;
 	static int N;
 	
 	public static void main(String[] args) throws IOException {
@@ -30,59 +29,63 @@ public class Main {
 			 N = Integer.parseInt(st.nextToken());
 			 if(N==0)break;
 			 map = new int[N][N];
-			 weight = new int[N][N];
+			 visited = new boolean[N][N];
 			 for (int i = 0; i < N ; i++) {
 				st = new StringTokenizer(br.readLine());
 				for (int j = 0; j < N; j++) {
 					map[i][j] = Integer.parseInt(st.nextToken());
-					weight[i][j] = Integer.MAX_VALUE;
 				}
 			 }
-			 bfs();
-			 sb.append("Problem "+ (t++) + ": "+ weight[N-1][N-1]).append('\n');
-//			 print();
+			 int distance = bfs_pq();
+			 sb.append("Problem "+ (t++) + ": "+ distance).append('\n');
 			 
 		}
 		System.out.println(sb);
 	}
 
-	private static void print() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				System.out.print(weight[i][j]+" ");
-			}
-			System.out.println();
-		}
-	}
-
-	private static void bfs() {
-		Queue<int[]> q = new ArrayDeque<>();
-		q.offer(new int[]{0,0,map[0][0]});
-		weight[0][0] = map[0][0];
+	private static int bfs_pq() {
+		PriorityQueue<Node> q = new PriorityQueue<>();             // 가장 작은 가중치를 뽑아내기 때문에 목적지에 도착할 때 그 값이 최소 가중치 합이다.
+		q.offer(new Node(0,0,map[0][0]));
+		visited[0][0] = true;
 		
-		int cur[];
+		Node cur;
 		int nx, ny;
 		while(!q.isEmpty()) {
 			cur = q.poll();
-//			if(cur[0] == N-1 && cur[1] == N-1) {
-//				return;
-//			}
+			
+			if(cur.x==N-1 && cur.y==N-1)return cur.d;
+			
 			for (int d = 0; d < dx.length; d++) {
-				nx = cur[0] + dx[d];
-				ny = cur[1] + dy[d];
+				nx = cur.x + dx[d];
+				ny = cur.y + dy[d];
 				if(nx<0||ny<0||nx>=N||ny>=N) continue;
 				
-				if(weight[nx][ny] > cur[2]+map[nx][ny]) {
-					
-					weight[nx][ny] = cur[2]+map[nx][ny];
-					q.offer(new int[]{nx,ny,weight[nx][ny]});
-					
-				}
+				if(visited[nx][ny])continue;
+				q.offer(new Node(nx,ny,cur.d+map[nx][ny]));  // pq로 인해 가장 작은 distance란 것이 보장됨
+				visited[nx][ny] = true;
 			}
 		}
+		return 0;
 		
 	}
 	
+	private static class Node implements Comparable<Node>{
+		int x;
+		int y;
+		int d;
+		public Node(int x, int y, int d) {
+			this.x = x;
+			this.y = y;
+			this.d = d;
+		}
+		
+		@Override
+		public int compareTo(Node o) {
+			return this.d - o.d;
+		}
+
+		
+	}
 	
 	
 }
