@@ -1,45 +1,48 @@
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    static final int MAX = 100000; // 문제에서 주어진 최대 위치
+    static int cnt, time;
+    static final int MAXSIZE = 100000;
+    static int[][] dp = new int[2][MAXSIZE + 1];
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int K = sc.nextInt();
+    public static void main(String[] agrs) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
 
-        int[] dist = new int[MAX + 1]; // 각 위치까지의 최단 시간 저장
-        int[] ways = new int[MAX + 1]; // 각 위치까지의 최단 시간으로 도달하는 방법의 수 저장
-        boolean[] visited = new boolean[MAX + 1]; // 방문 여부 체크
-        Queue<Integer> queue = new LinkedList<>();
+        bfs(n, k);
+        System.out.println(dp[0][k]);
+        System.out.println(dp[1][k]);
+    }
 
-        queue.offer(N);
-        visited[N] = true;
-        dist[N] = 0;
-        ways[N] = 1;
+    public static void bfs(int n, int k) {
+        boolean[] visited = new boolean[MAXSIZE + 1];
+        Arrays.fill(dp[0], MAXSIZE);
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(n);
+        visited[n] = true;
+        dp[0][n] = 0;
+        dp[1][n] = 1; // 시작 위치의 방법 수는 1
 
-        while (!queue.isEmpty()) {
-            int cur = queue.poll();
+        while (!q.isEmpty()) {
+            int idx = q.poll();
+            int currentTime = dp[0][idx];
 
-            // 현재 위치에서 가능한 다음 위치들을 탐색
-            int[] nextPositions = { cur - 1, cur + 1, cur * 2 };
-            for (int next : nextPositions) {
-                if (next < 0 || next > MAX) continue; // 범위를 벗어나면 건너뜀
+            int[] next = new int[]{idx - 1, idx + 1, idx * 2};
+            for (int i : next) {
+                if (i < 0 || i > MAXSIZE) continue;
 
-                if (!visited[next]) {
-                    visited[next] = true;
-                    dist[next] = dist[cur] + 1;
-                    ways[next] = ways[cur];
-                    queue.offer(next);
-                } else if (dist[next] == dist[cur] + 1) {
-                    // 이미 방문한 경우에 최단 시간과 같으면 경로의 수를 더해준다
-                    ways[next] += ways[cur];
+                if (!visited[i]) {
+                    q.offer(i);
+                    visited[i] = true;
+                    dp[0][i] = currentTime + 1;
+                    dp[1][i] = dp[1][idx]; // 새로운 위치에 처음 도달하는 방법의 수
+                } else if (dp[0][i] == currentTime + 1) {
+                    dp[1][i] += dp[1][idx]; // 같은 시간에 도달하는 추가적인 방법의 수
                 }
             }
         }
-
-        // 결과 출력
-        System.out.println(dist[K]);
-        System.out.println(ways[K]);
     }
 }
