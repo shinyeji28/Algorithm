@@ -70,6 +70,7 @@ public class Main {
             Node cur = pq.poll();
             int node = cur.to;
             int cost = cur.cost;
+            if(visited[node]) continue;
             visited[node] = true;
 
             for(Node nextNode: map[node]){
@@ -77,13 +78,9 @@ public class Main {
                 int nCost = cost + nextNode.cost;
                 if(distance[nNode]>nCost) {
                     distance[nNode] = nCost;
+                    pq.offer(new Node(nNode, nCost));
                 }
-                if(visited[nNode]) continue;
-                pq.offer(new Node(nNode, nCost));
-
             }
         }
-
-
     }
 }
