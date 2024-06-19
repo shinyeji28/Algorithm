@@ -1,0 +1,86 @@
+/*
+    방법 >
+    DFS
+    m개의 친구들이 번갈아가면 수확한다.
+    이때 누군가 방문했으면 수확량을 더하지 않고 이동만 한다
+    
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    static class Node{
+        int x, y;
+        public Node(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+    static int[][] map;
+    static int[] dx = new int[]{0,0,-1,1};
+    static int[] dy = new int[]{-1,1,0,0};
+    static Node[] pos;
+    static boolean[][][] visited;
+    static int result,n,m;
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        visited = new boolean[m][n][n];
+        pos = new Node[m];
+
+        map = new int[n][n];
+        for(int i=0;i<n;i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0;j<n;j++){
+                map[i][j] = Integer.parseInt(st.nextToken());    
+            }
+        }
+        int total=0;
+        for(int i=0;i<m;i++){
+            st = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(st.nextToken())-1;
+            int y = Integer.parseInt(st.nextToken())-1;
+            pos[i] =new Node(x,y);
+            total += map[x][y];
+            visited[i][x][y] = true;
+        }
+        dfs(0, 0,total);
+        System.out.println(result);
+
+    }
+    public static void dfs(int friendIdx, int depth ,int total){
+        if(depth == m*3){
+            result = Math.max(result, total);
+            return;
+        }
+        int x = pos[friendIdx].x;
+        int y = pos[friendIdx].y;
+        for(int d=0;d<dx.length;d++){
+            int nx = x + dx[d];
+            int ny = y + dy[d];
+            if(nx<0|| ny<0|| nx>=n ||ny>=n || visited[friendIdx][nx][ny])continue;
+            boolean isVisited = false;
+            for(int i=1;i<m;i++){
+                int checkIdx = (friendIdx+i) % m;
+                if(visited[checkIdx][nx][ny] == true){
+                    isVisited=true;
+                    break;
+                }
+            }
+            visited[friendIdx][nx][ny] = true;
+            pos[friendIdx].x = nx;
+            pos[friendIdx].y = ny;
+            if(isVisited){
+                dfs((friendIdx +1)%m, depth+1,total);
+            }else{
+                dfs((friendIdx +1)%m ,depth+1, total + map[nx][ny]);
+            }
+            visited[friendIdx][nx][ny] = false;
+            pos[friendIdx].x = x;
+            pos[friendIdx].y = y;
+        }
+    }
+   
+}
