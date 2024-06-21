@@ -1,0 +1,58 @@
+/*
+    sorting 오름차순
+    nC3을 모두 구함
+    return 중앙값 저장(index 1) (중간 위치) 
+    ** Todo 순차 탐색 O(n)로는 시간복잡도가 여전히 큼, 이진탐색를 모색하자
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    static final int PICKSIZE = 3;
+    
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuffer sb = new StringBuffer();
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int q = Integer.parseInt(st.nextToken());
+        long[] expect = new long[q];
+        long[] array = new long[n];
+        st = new StringTokenizer(br.readLine());
+        for(int i=0;i<n;i++){
+            array[i] = Long.parseLong(st.nextToken());
+        }
+        for(int i=0;i<q;i++){
+            st = new StringTokenizer(br.readLine());
+            expect[i] = Long.parseLong(st.nextToken());
+        }
+        Arrays.sort(array);
+        int qIdx=0;
+        
+        for(int i=0;i<n;i++){
+            if(qIdx==q) break;
+            if(expect[qIdx]<array[i]){
+                sb.append(0).append('\n');
+                qIdx++;
+            }
+            if(array[i] == expect[qIdx]){
+                if(i == 0 ||i == n-1 ){
+                    sb.append(0).append('\n');
+                }
+                else{
+                    sb.append(i * (n-(i+1))).append('\n');
+                }
+                qIdx++;
+
+            }            
+        
+        }
+        if(qIdx!=q){
+            for(int i=qIdx;i<q;i++){
+                sb.append(0).append('\n');
+            }
+        }
+        System.out.println(sb);
+    }
+    
+}
