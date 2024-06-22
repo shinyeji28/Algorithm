@@ -10,7 +10,6 @@ import java.util.*;
 
 public class Main {
     static final int PICKSIZE = 3;
-    
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuffer sb = new StringBuffer();
@@ -30,12 +29,28 @@ public class Main {
         Arrays.sort(array);
 
         for(int i=0;i<q;i++){
-            long idx = Arrays.binarySearch(array, expect[i]);
+            int idx = binarySearch(array, expect[i]);
             if(idx<0)sb.append(0).append('\n');
             else sb.append(idx * (n-(idx+1))).append('\n');
         }
         
         System.out.println(sb);
+    }
+    public static int binarySearch(long[] array, long findIdx){
+        int left = 0;
+        int right = array.length-1;
+        while(left <= right){
+            int pivot = (left + right) /2;
+            if(findIdx == array[pivot]){
+                return pivot;
+            }
+            if(findIdx < array[pivot]){
+                right = pivot-1;
+            }else if (array[pivot] < findIdx){
+                left = pivot+1;
+            }
+        }
+        return -1;
     }
     
 }
