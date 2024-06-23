@@ -1,3 +1,6 @@
+/* 
+    조합) 4개까지 뽑으면서 합 비교
+        하나뽑을 때 동시에 상하좌우 중 하나를 더함*/
 import java.io.*;
 import java.util.*;
 
@@ -7,7 +10,7 @@ public class Main {
     static boolean[][] visited;
     static int[] dx = new int[]{0, 0, 1, -1};
     static int[] dy = new int[]{1, -1, 0, 0};
-    static int maxBeauty = 0;
+    static int result = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,32 +25,30 @@ public class Main {
             }
         }
 
-        findMaxBeauty(0, 0, 0, 0);
-        System.out.println(maxBeauty);
+        findMaxBeauty(0, 0,0);
+        System.out.println(result);
     }
-
-    public static void findMaxBeauty(int x, int y, int depth, int currentBeauty) {
-        if (depth == 4) {
-            maxBeauty = Math.max(maxBeauty, currentBeauty);
+    public static void findMaxBeauty( int depth, int sum, int start){
+        result = Math.max(result, sum);
+        if(depth == 4){
             return;
         }
 
-        for (int i = x; i < n; i++) {
-            for (int j = (i == x ? y : 0); j < n; j++) {
-                if (!visited[i][j]) {
-                    for (int d = 0; d < 4; d++) {
-                        int nx = i + dx[d];
-                        int ny = j + dy[d];
-                        if (nx >= 0 && ny >= 0 && nx < n && ny < n && !visited[nx][ny]) {
-                            visited[i][j] = visited[nx][ny] = true;
-                            findMaxBeauty(i, j, depth + 1, currentBeauty + map[i][j] + map[nx][ny]);
-                            visited[i][j] = visited[nx][ny] = false;
-                        }
-                    }
-                }
+        for(int i=start;i<n*n;i++){
+            int cx = i/n;
+            int cy = i%n;
+            int tempSum = sum + map[cx][cy];
+            if(visited[cx][cy])continue;
+            visited[cx][cy] = true;
+            for(int d=0;d<dx.length;d++){
+                int nx = cx + dx[d];
+                int ny = cy + dy[d];
+                if(nx<0 || ny<0 || nx>=n || ny>=n || visited[nx][ny])continue;
+                visited[nx][ny] = true;
+                findMaxBeauty( depth+1,tempSum + map[nx][ny], i+1);
+                visited[nx][ny] = false;
             }
+            visited[cx][cy] = false;
         }
-
-        maxBeauty = Math.max(maxBeauty, currentBeauty); 
     }
 }
