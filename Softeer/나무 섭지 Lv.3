@@ -1,0 +1,69 @@
+from collections import deque
+
+def can_escape(n, m, grid):
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    # Finding positions of Namwoo, Exit and Ghosts
+    namwoo_pos = None
+    exit_pos = None
+    ghost_positions = []
+    
+    for i in range(n):
+        for j in range(m):
+            if grid[i][j] == 'N':
+                namwoo_pos = (i, j)
+            elif grid[i][j] == 'D':
+                exit_pos = (i, j)
+            elif grid[i][j] == 'G':
+                ghost_positions.append((i, j))
+    
+    # Function to check if position is within grid and not a wall
+    def is_valid(x, y):
+        return 0 <= x < n and 0 <= y < m and grid[x][y] != '#'
+    
+    # BFS for Namwoo
+    queue = deque([(namwoo_pos, 0)])
+    visited = set()
+    visited.add(namwoo_pos)
+    
+    while queue:
+        (x, y), t = queue.popleft()
+        
+        # Check if Namwoo reaches the exit
+        if (x, y) == exit_pos:
+            return "Yes"
+        
+        # Calculate ghost positions for this time t
+        ghost_set = set()
+        for gx, gy in ghost_positions:
+            ghost_queue = deque([(gx, gy)])
+            ghost_visited = set()
+            ghost_visited.add((gx, gy))
+            ghost_time = 0
+            while ghost_queue and ghost_time <= t:
+                ghost_time += 1
+                for _ in range(len(ghost_queue)):
+                    gx, gy = ghost_queue.popleft()
+                    for dx, dy in directions:
+                        ng_x, ng_y = gx + dx, gy + dy
+                        if is_valid(ng_x, ng_y) and (ng_x, ng_y) not in ghost_visited:
+                            ghost_visited.add((ng_x, ng_y))
+                            ghost_queue.append((ng_x, ng_y))
+            ghost_set.update(ghost_visited)
+        
+        # Try moving Namwoo in all possible directions
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if is_valid(nx, ny) and (nx, ny) not in visited and (nx, ny) not in ghost_set:
+                visited.add((nx, ny))
+                queue.append(((nx, ny), t + 1))
+    
+    return "No"
+
+# Input reading
+n, m = map(int, input().split())
+grid = [input().strip() for _ in range(n)]
+
+# Function call to determine if Namwoo can escape
+result = can_escape(n, m, grid)
+print(result)
