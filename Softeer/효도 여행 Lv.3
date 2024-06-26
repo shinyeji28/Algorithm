@@ -1,0 +1,86 @@
+/*
+    1. DFS (문자열 후보 조합)
+    2. leaf노드에 도착하면 LCS구함
+        - LCS 구히기
+            같을 때 : dp[i][j] = dp[i-1][j-1]+1
+            다를 때 : dp[i][j] = Math.max(dp[i-1[j], dp[i][j-1])
+    3. 백트래킹 : 현재 LCS보다 문자열 경로 size가 작으면 return
+
+    -> O(5000^4) 시간초과
+
+    4. DFS와 LCS를 동시에 구하면서 메모리제이션하기 -> 시간 절약 성공!!
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static class Node{
+        int to;
+        char c;
+        public Node(int to, char c){
+            this.to = to;
+            this.c = c;
+        }
+    }
+    static int lcs;
+    static char[] origin;
+    static List<Node>[] graph;
+    static List<String> route;
+    static boolean[] visited;
+    static int oLen;
+
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        origin = new char[m];
+        st = new StringTokenizer(br.readLine());
+        String str = st.nextToken();
+        origin = str.toCharArray();
+        oLen = origin.length;
+        graph = new ArrayList[n+1];
+        route = new ArrayList<>();
+        visited = new boolean[n+1];
+        for(int i=1;i<=n;i++){
+            graph[i] = new ArrayList<>();
+        }
+        for(int i=0;i<n-1;i++){
+            st = new StringTokenizer(br.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            char c = st.nextToken().charAt(0);
+            graph[from].add(new Node(to,c));
+            graph[to].add(new Node(from,c));
+        }
+
+        visited[1] = true;
+        findRoute(1, new int[oLen+1]);
+        System.out.println(lcs);
+    }
+    public static void findRoute(int from, int[] prevDp){
+
+        boolean isLeaf = true;
+        for(Node nNode : graph[from]){
+            if(visited[nNode.to])continue;
+            isLeaf = false;
+            visited[nNode.to] = true;
+            //lcs구하기
+            int[] dp = new int[prevDp.length];
+            for(int i=1;i<=oLen;i++){
+                if(origin[i-1]==nNode.c) dp[i] = prevDp[i-1] +1;
+                else dp[i] = Math.max(prevDp[i], dp[i-1]);
+            }
+            
+            route.add(nNode.c+"");
+            findRoute(nNode.to, dp);
+            visited[nNode.to] = false;
+            route.remove(route.size()-1);
+        }
+        if(isLeaf){
+            if(route.size()>lcs){
+                lcs = Math.max(lcs, prevDp[oLen]);
+            }
+        }
+    }
+}
