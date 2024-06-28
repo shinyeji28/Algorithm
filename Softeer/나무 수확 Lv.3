@@ -1,0 +1,70 @@
+/*
+  bfs + dp
+  dp의 한 차원을 더해 생각하기
+  스프링클러를 설치한 차원과 설치하지 않는 차원을 나눠 dfs를 돌리면 됨
+
+  이익을 구하면서 하나의 조건이 더 붙는 문제는 dp의 차원을 늘려 생각하기!! 
+*/
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    static int n;
+    static int[][] map;
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+        map = new int[n][n];
+        for(int i=0;i<n;i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for(int j=0;j<n;j++){
+                map[i][j] = Integer.parseInt(st.nextToken()); 
+            }
+        }
+        System.out.println(dfs());
+    }
+    public static int dfs(){
+        int[] dx = new int[]{0,1};
+        int[] dy = new int[]{1,0};
+        Queue<int[]> q = new ArrayDeque<>();
+        boolean visited[][][] = new boolean[2][n][n];
+        int[][][] dp = new int[2][n][n];
+        q.offer(new int[]{0,0,0});
+        visited[0][0][0] = true;
+        visited[1][0][0] = true;
+        dp[0][0][0] = map[0][0];
+        dp[1][0][0] = map[0][0]*2;
+        while(!q.isEmpty()){
+            int[] pos = q.poll();
+            int x = pos[0];
+            int y = pos[1];
+            int isSprinkler = pos[2];
+            for(int d=0;d<dx.length;d++){
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+                if(nx<0|| ny<0||nx>=n||ny>=n)continue;
+                if(isSprinkler==0){
+                    if(!visited[0][nx][ny] || dp[0][nx][ny]< dp[0][x][y]+map[nx][ny]){
+                        dp[0][nx][ny]= dp[0][x][y]+map[nx][ny];
+                        visited[0][nx][ny] = true;
+                        q.offer(new int[]{nx,ny,0});
+                    }
+                    if(!visited[1][nx][ny] || dp[1][nx][ny]< dp[0][x][y]+map[nx][ny]*2){
+                        dp[1][nx][ny] = dp[0][x][y]+map[nx][ny]*2;
+                        visited[1][nx][ny] = true;
+                        q.offer(new int[]{nx,ny,1});
+                    }
+                }else{
+                    if(!visited[1][nx][ny] || dp[1][nx][ny]< dp[1][x][y]+map[nx][ny]){
+                        dp[1][nx][ny] = dp[1][x][y]+map[nx][ny];
+                        visited[1][nx][ny] = true;
+                        q.offer(new int[]{nx,ny,1});
+                    }
+                }
+            }
+        }
+        return dp[1][n-1][n-1];
+    }
+}
+
