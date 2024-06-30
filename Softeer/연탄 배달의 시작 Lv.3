@@ -1,0 +1,36 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // 첫 번째 줄에서 마을의 수 입력 받기
+        int n = scanner.nextInt();
+        
+        // 두 번째 줄에서 마을의 위치 입력 받기
+        int[] locations = new int[n];
+        for (int i = 0; i < n; i++) {
+            locations[i] = scanner.nextInt();
+        }
+        
+        // 마을 위치 배열을 순회하며 각 인접한 마을 쌍 간의 거리 계산
+        int minDistance = Integer.MAX_VALUE;
+        for (int i = 0; i < n - 1; i++) {
+            int distance = locations[i + 1] - locations[i];
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+        }
+        
+        // 가장 작은 거리를 가지는 마을 쌍의 수를 셈
+        int count = 0;
+        for (int i = 0; i < n - 1; i++) {
+            if (locations[i + 1] - locations[i] == minDistance) {
+                count += 1;
+            }
+        }
+        
+        // 결과 출력
+        System.out.println(count);
+    }
+}
