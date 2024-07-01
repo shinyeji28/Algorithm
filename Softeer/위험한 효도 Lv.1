@@ -2,51 +2,19 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException{
+        BufferedReader  br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        
         int a = Integer.parseInt(st.nextToken());
         int b = Integer.parseInt(st.nextToken());
         int d = Integer.parseInt(st.nextToken());
-        
-        System.out.println(getMinTime(a, b, d));
-    }
-    
-    public static int getMinTime(int a, int b, int d) {
-        // 초기 상태에서 술래의 주기
-        int forwardTime = a;
-        int backwardTime = b;
-        
-        // 남우가 터치하러 가는 시간 계산
-        int toTouchTime = 0;
-        int distance = d;
-        
-        // 술래가 뒤를 보고 있는 시간동안 이동
-        while (distance > 0) {
-            toTouchTime += forwardTime;
-            distance -= forwardTime;
-            if (distance <= 0) break;
-            toTouchTime += backwardTime;
-        }
-        
-        // 남우가 터치한 후 술래의 주기 변경 (뒤를 보고 있는 시간 b, 앞을 보고 있는 시간 a)
-        forwardTime = b;
-        backwardTime = a;
-        
-        // 남우가 출발선으로 돌아오는 시간 계산
-        int toReturnTime = 0;
-        distance = d;
-        
-        // 술래가 뒤를 보고 있는 시간동안 이동
-        while (distance > 0) {
-            toReturnTime += forwardTime;
-            distance -= forwardTime;
-            if (distance <= 0) break;
-            toReturnTime += backwardTime;
-        }
-        
-        // 전체 시간을 계산
-        return toTouchTime + toReturnTime;
+        int turn1 = 0;
+        int turn2 = 0;
+        if(d%a == 0)turn1 = (d/a-1) * (a+b) + a;
+        else turn1 = d/a * (a+b) + d%a;
+        if(d%b == 0)turn2 = (d/b-1) * (a+b) + b;
+        else turn2 = d/b * (a+b) + d%b;
+        System.out.println(turn1 + turn2);
     }
 }
