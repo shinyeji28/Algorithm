@@ -1,0 +1,58 @@
+/*
+    조합 : 색상 좌표를 하나씩 선택하기 (선택한 넓이가 최소가 되는 것 찾기)
+*/
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static class Dot{
+        int x, y;
+        public Dot(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+    public static Dot[] pick;
+    public static List<Dot>[] dots;
+    public static int minArea = Integer.MAX_VALUE;
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
+        dots = new ArrayList[k];
+        for(int i=0;i<k;i++){
+            dots[i] = new ArrayList<>();
+        }
+        pick = new Dot[k];
+        for(int i=0;i<n;i++){
+            st = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());        
+            int c = Integer.parseInt(st.nextToken())-1;
+            dots[c].add(new Dot(x,y));
+        }
+
+        combinationColor(0,0, new int[]{Integer.MAX_VALUE,Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE}); // minx, maxx,miny,maxy
+        System.out.println(minArea);
+    }
+    public static void combinationColor(int colorIdx, int area, int[] square){
+        if(area>=minArea) return;
+        if(colorIdx == pick.length){
+          minArea = Math.min(minArea, area);
+          return;
+        }
+        for(Dot dot : dots[colorIdx]){
+            pick[colorIdx] = dot;
+            // 넓이 구하기
+            int minX = Math.min(square[0],dot.x);
+            int maxX = Math.max(square[1],dot.x);
+            int minY = Math.min(square[2],dot.y);
+            int maxY = Math.max(square[3],dot.y);
+            int tempArea = Math.abs(minX - maxX) * Math.abs(minY - maxY);
+            combinationColor(colorIdx+1, tempArea, new int[]{minX, maxX, minY, maxY});
+        }
+    }
+}
