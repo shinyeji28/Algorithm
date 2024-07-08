@@ -1,82 +1,96 @@
-/**
- * 입력>
- * 경사로 길이 : X
- * 
- * 출력>
- * 활주로를 건설할 수 있는 경우의 수를 계산
- * 
- * 조건>
- * 높이가 1차이나고
- * 작은 부분의 지형이 X이상일 때 
- * 
- *
- *
- */
-import java.util.*;
+/*
+* 직선으로 탐방하다가 나보다 +1인 수가 나오면 나를 포함하여 뒤로 x만큼 탐색하여 경사로 설치 가능 여부 판별
+*                 나보다 -1인 수가 나오면 직진하여 x만큼 설치 가능 여부 판별
+* 설치 불가면 return;
+* 2이상 차이나면 return;
+* 경사로 중복 설치가 불가하여 방문배열로 체크하기
+* */
 import java.io.*;
+import java.util.*;
 public class Solution {
-
-    static int[][]rowMap;
-    static int[][]colMap;
+    static int n,x;
+    static int[][] map;
     static boolean[] visited;
-    static int N,X;
-    static int result;
-    public static void main(String[] args) throws IOException {
+
+    public static void main(String[] agrs) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuffer sb = new StringBuffer();
         int T = Integer.parseInt(br.readLine());
-        for (int t = 0; t < T; t++) {
+        for(int t = 0;t<T;t++){
             StringTokenizer st = new StringTokenizer(br.readLine());
-            N = Integer.parseInt(st.nextToken());
-            X = Integer.parseInt(st.nextToken());
-            rowMap = new int[N][N];
-            colMap = new int[N][N];
-            result = 0;
-            for (int i = 0; i < N; i++) {
-                st = new StringTokenizer(br.readLine());    
-                for (int j = 0; j < N; j++) {
-                    rowMap[i][j] = colMap[j][i] = Integer.parseInt(st.nextToken());
+            n = Integer.parseInt(st.nextToken());
+            x = Integer.parseInt(st.nextToken());
+            map = new int[n][n];
+            for(int i=0;i<n;i++){
+                st = new StringTokenizer(br.readLine());
+                for(int j=0;j<n;j++){
+                    map[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
-            
-            for (int i = 0; i < N; i++) {
-				if(check(rowMap[i]))result++;
-				if(check(colMap[i]))result++;
-			}
-            System.out.println("#"+(t+1)+" "+result);
-            
+
+            int ableCases = 0;
+
+            for(int i=0;i<n;i++){
+                int prev = map[i][0];
+                visited = new boolean[n];
+                for(int j=1;j<n;j++){
+                    if(prev != map[i][j]){
+                        if(Math.abs(prev - map[i][j])>1)break;
+                        if(prev > map[i][j]){
+                            if(checkingGaro(i,j, map[i][j])) {
+                                j += (x-1);
+                            }else break;
+                        }else{
+                            if(!checkingGaro(i,j-x, prev))break;
+                        }
+                    }
+                    if(j==n-1){
+                        ableCases++;
+                    }
+
+                    prev = map[i][j];
+                }
+            }
+
+            for(int j=0;j<n;j++){
+                int prev = map[0][j];
+                visited = new boolean[n];
+                for(int i=1;i<n;i++){
+                    if(prev != map[i][j]){
+                        if(Math.abs(prev - map[i][j])>1)break;
+                        if(prev > map[i][j]){
+                            if(checkingSero(i,j, map[i][j])) {
+                                i += (x-1);
+                            }else break;
+                        }else{
+
+                            if(!checkingSero(i-x,j, prev))break;
+                        }
+                    }
+                    if(i==n-1) {
+                        ableCases++;
+                    }
+                    prev = map[i][j];
+                }
+            }
+            sb.append("#"+(t+1)+" "+ableCases).append('\n');
         }
-        
+        System.out.println(sb);
     }
-    private static boolean check(int map[]) {
-    	visited = new boolean[N];
-    	for (int i = 0; i < N-1; i++) {
-			int cur = map[i];
-    		int next = map[i+1];
-    		int diff = cur - next;
-    		
-    		if(diff == 0) {  // 같다
-    			continue;
-    		}else if(diff==-1) {  // 왼쪽이 1 더 작다
-    			// 활주로 설치할 수 있는지 확인 (i포함 이전을 확인)
-    			for (int j = i; j >= i-(X-1); j--) {
-					if(j<0)return false;
-					if(visited[j])return false;
-					if(map[i]!=map[j])return false;
-					visited[j]=true;
-				}
-    		}else if(diff==1) {  // 오른쪽이 1더 작다
-    			// 활주로 설치할 수 있는지 확인 (i포함 이후를 확인)
-    			for (int j = i+1; j <= (i+1)+(X-1); j++) {
-					if(j>=N)return false;
-					if(visited[j])return false;
-					if(map[i+1]!=map[j])return false;
-					visited[j]=true;
-				}
-    		}else {
-    			return false;
-    		}
-    		
-		}
-    	return true;
+    public static boolean checkingGaro(int cx, int cy, int num){
+        for(int i=cy;i<cy+x;i++){
+            if(i<0||i>=n || visited[i]) return false;
+            if(num!=map[cx][i])return false;
+            visited[i] = true;
+        }
+        return true;
+    }
+    public static boolean checkingSero(int cx, int cy, int num){
+        for(int i=cx;i<cx+x;i++){
+            if(i<0||i>=n ||visited[i]) return false;
+            if(num!=map[i][cy])return false;
+            visited[i] = true;
+        }
+        return true;
     }
 }
