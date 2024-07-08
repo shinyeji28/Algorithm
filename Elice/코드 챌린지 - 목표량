@@ -1,0 +1,67 @@
+/*
+시간 제한: 1초
+엘리스 토끼는 목표량을 정해 수학 문제를 열심히 풉니다. 목표량은 정수입니다.
+
+내일 풀 수학 문제의 개수는 오늘 푼 문제 개수의 수와 숫자의 구성이 같으면서, 오늘 푼 문제 개수의 수보다 큰 수 중 가장 작은 수입니다.
+
+예를 들어, 오늘 67문제를 풀었으면 다음 날 76문제를 풉니다.
+
+오늘 푼 문제의 개수를 줬을 때 다음날 풀 문제의 개수를 출력하는 프로그램을 작성하세요.
+
+
+지시사항
+입력
+첫 번째 줄에 오늘 푼 문제의 개수인 자연수 N을 입력합니다.
+
+
+1≤N≤999999
+
+
+정답이 반드시 있는 경우만 입력값으로 주어집니다.
+출력
+다음날 풀 문제의 개수를 출력합니다.
+입력 예시
+364
+Copy
+출력 예시
+436
+*/
+/*
+    내일 풀 문제 
+    - 오늘과 숫자 구성 같음
+    - 오늘 보다 큰 수 중 가장 작은 수
+
+    뒤에서 부터 탐색하여 다음 자리수보다 작은 값을 선택
+    선택한 값보다 가장 차이가 덜 나는 큰 값 찾기
+    swap
+    뒤에거는 오름 차순 정렬
+*/
+import java.util.*;
+import java.io.*;
+class Main {
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        int input = sc.nextInt();
+        sc.close();
+        char[] numbers = Integer.toString(input).toCharArray();
+
+        int i;
+        for(i=numbers.length-2;i>=0;i--){
+            if(numbers[i] < numbers[i+1])break;
+        }
+        if(i==-1){
+            i = numbers.length-1;
+        }
+        int j;
+        for(j=numbers.length-1;j>=0;j--){
+            if(numbers[i]<numbers[j])break;
+        }
+        char temp = numbers[i];
+        numbers[i] = numbers[j];
+        numbers[j] = temp;
+
+        Arrays.sort(numbers, i+1, numbers.length);
+        System.out.println(Integer.parseInt(new String(numbers)));
+
+    }
+}
