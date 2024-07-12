@@ -1,0 +1,163 @@
+/*
+시간 제한: 1 초
+양의 정수로 이루어진 수열 a 
+1
+​
+ ,a 
+2
+​
+ ,⋯,a 
+n
+​
+ 이 있습니다.
+
+1≤a 
+i
+​
+ ≤10 
+5
+ 
+이 수열에서 각 원소를 선택하거나 선택하지 않음으로써 총 2 
+n
+ 개의 부분 수열을 만들 수 있고, 만들어진 모든 부분 수열의 합인 2 
+n
+ 개의 정수가 주어졌을 때, 원래의 수열 a 
+1
+​
+ ,a 
+2
+​
+ ,⋯,a 
+n
+​
+ 을 구하는 프로그램을 작성하세요.
+
+
+지시사항
+입력
+첫째 줄에 정수 n이 주어집니다.
+1≤n≤15
+둘째 줄에 이 수열에서 만들 수 있는 모든 부분 수열의 합인 2 
+n
+ 개의 정수 s 
+1
+​
+ ,s 
+2
+​
+ ,⋯,s 
+2 
+n
+ 
+​
+ 이 주어집니다.
+0≤s 
+i
+​
+ ≤n×10 
+5
+ 
+출력
+첫째 줄에 원래 수열의 원소를 오름차순으로 출력합니다.
+입력 예시
+3
+1 4 7 3 0 6 5 2
+Copy
+출력 예시
+1 2 4
+Copy
+
+Main.java
+Java (OpenJDK 17)
+
+
+
+29303132343536373839404143444226272823242533
+/*
+    부분 집합엔 공집합과 자기자신 포함됨
+
+    1. 오름차순 정렬
+    2. 가장 작은 수는 원래 수열의 원소
+    3. 원래 수열과 합해 만들 수 있는 것 삭제
+    4. 위를 반복
+*/
+
+import java.io.*;
+…            q.removeAll(removeList);
+            System.out.println(q);
+        }
+        System.out.println(answer.toString());
+        for(int i=0;i<answer.size();i++){
+            System.out.print(answer.get(i)+" ");
+        }
+    }
+}
+
+실행
+
+제출
+에디터 연결됨
+
+강의 로고
+🏆 매일매일 한 문항씩 도전하기
+[Day 5] 수열 복원
+
+2
+/2
+
+
+도움이 필요하신가요?
+
+커뮤니티에서 해결해보세요.
+
+
+*/
+/*
+    부분 집합엔 공집합과 자기자신 포함됨
+
+    1. 오름차순 정렬
+    2. 가장 작은 수는 원래 수열의 원소
+    3. 원래 수열과 합해 만들 수 있는 것 삭제
+    4. 위를 반복
+*/
+
+import java.io.*;
+import java.util.*;
+class Main {
+
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int len = (int) Math.pow(2,n);
+        List<Integer> arr = new ArrayList<>();
+        for(int i=0;i<len;i++){
+            int input = Integer.parseInt(st.nextToken());
+            if(input == 0) continue;
+            arr.add(input);
+        }
+        Collections.sort(arr);
+
+        Queue<Integer> q = new ArrayDeque<>(arr);
+        List<Integer> answer = new ArrayList<>();
+        int sum = 0;
+        while(!q.isEmpty()){
+            int smallest = q.poll();
+            answer.add(smallest);
+            sum +=smallest;
+            System.out.println(answer);
+            List<Integer> removeList = new ArrayList<>(); 
+            for(Integer num : new ArrayList<Integer>(q)){
+                if(answer.contains(sum-num)){
+                    removeList.add(num);
+                }
+            } 
+            q.removeAll(removeList);
+            System.out.println(q);
+        }
+        System.out.println(answer.toString());
+        for(int i=0;i<answer.size();i++){
+            System.out.print(answer.get(i)+" ");
+        }
+    }
+}
