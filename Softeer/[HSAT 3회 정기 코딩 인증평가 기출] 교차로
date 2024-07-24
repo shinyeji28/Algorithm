@@ -1,3 +1,12 @@
+/*
+1. queue[]로 D,C,B,A 구역의 차량 정보를 저장
+2. 현재 car time < 오른쪽 car time -> 현재 car가 교차로를 지날 갈 수 있음
+3-1. 현재 car가 교차로를 지나 갈 수 있다면 pick list에 넣고 q.poll, result에 시간 기록
+4. t가 10^9임으로 t를 1씩 증가하면 시간초과 발생할 것임 -> t를 최소 시간으로 점프해야 함
+     curTime > 모든 car의 t -> 점프  = pick할게 없다 -> 점프
+5. 교착 상태면 즉시 종료
+*/
+
 import java.util.*;
 import java.io.*;
 
