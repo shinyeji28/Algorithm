@@ -1,0 +1,42 @@
+/*
+ * i < j < k 위치 일때 ak < ai < aj 인 경우를 세라
+ * O(n^3) -> 시간 초과 (조합 불가능)
+ * O(n^2)내에서 끝내야 함
+ *
+ * 포인트 : 중복된 수가 없다 = 즉, 나보다 크거나 작은 수만 있다 (크지 않으면 작은 것이다)
+ * ai < aj 인것을 구간 합으로 저장하다가 ai > aj이면 ak < ai < aj을 만족하므로 구간합으로 total에 더하면된다. (O(n^2))
+ * */
+
+import java.util.*;
+import java.io.*;
+public class Main{
+    public static class Node{
+        int busNum = 0;
+        int idx = 0;
+        public Node(int busNum, int idx){
+            this.busNum = busNum;
+            this.idx = idx;
+        }
+    }
+    public static void main(String[] agrs) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int[] buses = new int[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for(int i=0;i<n;i++){
+            buses[i] = Integer.parseInt(st.nextToken());
+        }
+        long total = 0;
+        for(int i=0;i<n;i++){
+            int areaSum = 0;
+            for(int j=i+1;j<n;j++){
+                if(buses[i] < buses[j]){
+                    areaSum++;
+                }else{
+                    total += areaSum;
+                }
+            }
+        }
+        System.out.println(total);
+    }
+}
