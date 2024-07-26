@@ -1,0 +1,45 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // 첫 번째 줄: n 입력
+        int n = scanner.nextInt();
+        
+        // 두 번째 줄: n개의 토양 비옥함 값 입력
+        int[] fertilities = new int[n];
+        for (int i = 0; i < n; i++) {
+            fertilities[i] = scanner.nextInt();
+        }
+        
+        // 최대 두 개의 값과 최소 두 개의 값을 초기화
+        int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+        int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+        
+        // 각 토양 비옥함 값을 순회하면서 최대값과 최소값 업데이트
+        for (int fertility : fertilities) {
+            if (fertility > max1) {
+                max2 = max1;
+                max1 = fertility;
+            } else if (fertility > max2) {
+                max2 = fertility;
+            }
+            
+            if (fertility < min1) {
+                min2 = min1;
+                min1 = fertility;
+            } else if (fertility < min2) {
+                min2 = fertility;
+            }
+        }
+        
+        // 최대 곱 계산
+        int maxProduct = Math.max(max1 * max2, min1 * min2);
+        
+        // 결과 출력
+        System.out.println(maxProduct);
+        
+        scanner.close();
+    }
+}
