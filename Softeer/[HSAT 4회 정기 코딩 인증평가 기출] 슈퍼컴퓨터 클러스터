@@ -1,0 +1,56 @@
+/*
+    어떤 숫자까지 올리는게 최선일지 모르기 때문에 이진탐색 진행
+    
+    mid까지 성능을 올리기 위한 비용 구하기 
+    그 비용이 B를 초과하지 않으면 right
+             B를 초과하면 left
+
+    한자리수가 남을 때까지 반복
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        long B = Long.parseLong(st.nextToken());
+        int[] cluster = new int[N]; 
+        HashMap<Integer,Integer> numberOf = new HashMap<>();
+        st = new StringTokenizer(br.readLine());
+        for(int i=0;i<N;i++){
+            cluster[i] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(cluster);
+
+        long left = cluster[0];
+        long right = cluster[N-1] + (long)Math.sqrt(B) + 1;
+       
+        long result = left;
+        while(left<=right){
+            long mid = left + (right-left)/2;
+            long cost = 0;
+            boolean flag = false;
+            for(int i=0;i<N;i++){
+                if(cluster[i] < mid){
+                    cost += Math.pow(mid - cluster[i], 2);
+                    if(cost > B){
+                        flag = true;
+                        break;
+                    }
+                }
+                
+            }
+            if(!flag){
+                left = mid+1;
+                result = mid;
+            }else{
+                right = mid-1;
+            }
+        }
+        System.out.println(result);
+        
+    }
+}
