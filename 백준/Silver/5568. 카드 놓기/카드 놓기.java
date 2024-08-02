@@ -5,7 +5,7 @@ public class Main {
     static int k;
     static boolean[] visited;
     static int[] pick;
-    static HashSet<Integer> sh;
+    static HashSet<String> sh;
     public static void main(String[] agrs)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
@@ -22,11 +22,11 @@ public class Main {
     }
     public static void permutation(int depth){
         if(depth == k){
-            String str = "";
+            StringBuilder sb = new StringBuilder();
             for(int i=0;i<k;i++){
-                str += pick[i]+"";
+                sb.append(pick[i]+"");
             }
-            sh.add(Integer.parseInt(str));
+            sh.add(sb.toString());
             return;
         }
         for(int i=0;i<nums.length;i++){
