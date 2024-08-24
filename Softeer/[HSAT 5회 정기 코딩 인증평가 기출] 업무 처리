@@ -1,0 +1,62 @@
+/*
+    부모 : node / 2
+    왼쪽 자식 : node * 2;
+    오른쪽 자식 : node * 2 + 1
+    root = 1, 오름차순
+
+    업무가 진행되는 날짜 수 (for)
+         1~leftnode까지 
+        부모를 기준으로
+        1. 대기열에 엄무가 있따면 업무를 부모에 할 당
+        day 짝수면 왼쪽 자식, 홀수면 오른쪽 자식의 업무를 부모 배열의 대기열에 할당
+            (리프노드는 그냥 할당)
+*/
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException{
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int H = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+        int R = Integer.parseInt(st.nextToken());
+
+        int nodeCnt = 0;
+        for(int i=0;i<=H;i++){
+            nodeCnt += Math.pow(2,i);
+        }
+
+        Queue<Integer>[] task = new ArrayDeque[nodeCnt+1];
+        for(int i=1;i<task.length;i++){
+            task[i] = new ArrayDeque<>();
+        }
+
+        for(int i=nodeCnt-(int)Math.pow(2,H)+1;i<=nodeCnt;i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0;j<K;j++){
+                task[i].offer(Integer.parseInt(st.nextToken()));
+            }
+        }
+
+
+        int result = 0;
+
+        for(int d=1;d<=R;d++){
+            for(int i=1;i<=nodeCnt-(int)Math.pow(2,H);i++){
+                if(i==1 && !task[i].isEmpty()) result += task[i].poll();
+
+                int idx = i * 2;
+                if((d+1)%2==0) idx = i * 2 + 1;
+                
+                if(!task[idx].isEmpty()){
+                    int t = task[idx].poll();
+                    task[i].offer(t);
+                }
+            }
+        }
+        System.out.println(result);
+    }
+}
