@@ -5,29 +5,27 @@ import java.util.*;
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             StringBuilder sb = new StringBuilder();
             int n = Integer.parseInt(br.readLine());
-            boolean[] S = new boolean[21];
+            int S = 0;
             for(int t=0;t<n;t++){
                 StringTokenizer st = new StringTokenizer(br.readLine());
                 String operation = st.nextToken();
                 int num = 0;
                 if(!operation.equals("all") && !operation.equals("empty")){
-                     num = Integer.parseInt(st.nextToken());
+                     num = Integer.parseInt(st.nextToken())-1;
                 }
 
                 switch(operation){
-                    case "add" : S[num] = true; break;
-                    case "remove" : S[num] = false; break;
+                    case "add" : S |= (1<<num); break;
+                    case "remove" : S &= ~(1<<num); break;
                     case "check" :
-                        if(S[num])sb.append("1");
-                        else sb.append("0");
-                        sb.append('\n');
+                        sb.append((S & (1<<num)) != 0  ? "1" : "0").append('\n');
                         break;
-                    case "toggle" : S[num] = !S[num]; break;
+                    case "toggle" : S ^= (1<<num); break;
                     case "all" :
-                        for(int i=1;i<=20;i++){S[i] = true;}
+                        S = (1<<20)-1;
                         break;
                     case "empty":
-                        for(int i=1;i<=20;i++){S[i] = false;}
+                        S = 0;
                         break;
                 }
             }
