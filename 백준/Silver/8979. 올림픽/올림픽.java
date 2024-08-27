@@ -39,16 +39,17 @@ public class Main {
             return b.g - a.g;
         });
 
-        int grade = 1;
-        int prev = 1;
-        for(int i=1;i<n;i++){
-            if(order[i].num==k)break;
+        int grade = 0;
+        int prev = 0;
+        for(int i=0;i<n;i++){
             grade++;
 
             if(i!=0 && (order[i].g==order[i-1].g) && (order[i].s==order[i-1].s) && (order[i].d==order[i-1].d)){
             }else{
                 prev = grade;
             }
+            if(order[i].num==k)break;
+
         }
 
         System.out.println(prev);
