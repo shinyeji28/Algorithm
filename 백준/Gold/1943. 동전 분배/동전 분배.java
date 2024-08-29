@@ -1,47 +1,47 @@
 import java.util.*;
 import java.io.*;
-
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] agrs) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        for (int t = 0; t < 3; t++) {  // 3개의 입력
-            int n = Integer.parseInt(br.readLine());  // 동전 종류의 수
+        StringBuilder sb = new StringBuilder();
+        for(int t=0;t<3;t++){
+            int n = Integer.parseInt(br.readLine());
             int sum = 0;
-            int[] value = new int[n];
-            int[] count = new int[n];
+            int[][] coins = new int[n][2];
+            for(int i=0;i<n;i++){
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                coins[i][0] = Integer.parseInt(st.nextToken());
+                coins[i][1] = Integer.parseInt(st.nextToken());
 
-            for (int i = 0; i < n; i++) {
-                st = new StringTokenizer(br.readLine());
-                value[i] = Integer.parseInt(st.nextToken());
-                count[i] = Integer.parseInt(st.nextToken());
-                sum += value[i] * count[i];
+                sum += ( coins[i][0] *  coins[i][1]);
+
             }
-
-            if (sum % 2 == 1) {  // 총합이 홀수이면 두 부분으로 나눌 수 없다.
+            if(sum % 2 == 1 ){
                 System.out.println(0);
                 continue;
             }
+            boolean[] dp = new boolean[sum/2+1];
 
-            boolean[] dp = new boolean[sum/2 + 1];
             dp[0] = true;
-
-            for (int i = 0; i < n; i++) {
-                int coinValue = value[i];
-                int coinCount = count[i];
-
-                for (int j = dp.length-1; j >= 0; j--) {
-                    if (dp[j]) {
-                        for (int k = 1; k <= coinCount; k++) {
-                            if (j + k * coinValue >= dp.length) break;
-                            dp[j + k * coinValue] = true;
+            for(int i=0;i<n;i++){
+                int value = coins[i][0];
+                int cnt = coins[i][1];
+                for(int j=dp.length-1;j>=0;j--){
+                    if(dp[j]){
+                        for(int k=1;k<=cnt;k++){
+                            if(j + k * value >= dp.length)break;
+                            dp[j + k * value] = true;
                         }
                     }
-                }
-            }
 
-            System.out.println(dp[dp.length-1] ? 1 : 0);
+                }
+
+            }
+            System.out.println(dp[dp.length-1]?1:0);
+//            sb.append(dp[dp.length-1]?1:0).append('\n');
         }
+//        System.out.println(sb);
+
     }
+
 }
