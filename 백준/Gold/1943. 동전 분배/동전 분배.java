@@ -24,25 +24,24 @@ public class Main {
                 continue;
             }
 
-            int target = sum / 2;
-            boolean[] dp = new boolean[target + 1];
+            boolean[] dp = new boolean[sum/2 + 1];
             dp[0] = true;
 
             for (int i = 0; i < n; i++) {
                 int coinValue = value[i];
                 int coinCount = count[i];
 
-                for (int j = target; j >= 0; j--) {
+                for (int j = dp.length-1; j >= 0; j--) {
                     if (dp[j]) {
                         for (int k = 1; k <= coinCount; k++) {
-                            if (j + k * coinValue > target) break;
+                            if (j + k * coinValue >= dp.length) break;
                             dp[j + k * coinValue] = true;
                         }
                     }
                 }
             }
 
-            System.out.println(dp[target] ? 1 : 0);
+            System.out.println(dp[dp.length-1] ? 1 : 0);
         }
     }
 }
