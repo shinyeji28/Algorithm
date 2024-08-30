@@ -14,7 +14,7 @@ public class Main {
         int n = Integer.parseInt(br.readLine());
         PriorityQueue<Node> pq = new PriorityQueue<>((a,b)->a.price - b.price);
 
-        int[] doroSum = new int[n];
+        long[] doroSum = new long[n];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i=0;i<n-1;i++){
             doroSum[i] = Integer.parseInt(st.nextToken());
@@ -31,7 +31,7 @@ public class Main {
         }
 
         int idx = n-1;
-        int minPrice = 0;
+        long minPrice = 0;
         while(!pq.isEmpty()){
             if(idx == 0)break;
             Node node = pq.poll();
