@@ -40,31 +40,22 @@ WITH truck_history AS (
     JOIN CAR_RENTAL_COMPANY_RENTAL_HISTORY history ON car.car_id = history.car_id
     WHERE car.car_type = '트럭'
 ),
-duration_type_to_number AS (
-    SELECT 
-        plan_id, 
-        car_type, 
-        discount_rate, 
-        CASE duration_type 
-            WHEN '7일 이상' THEN 7
-            WHEN '30일 이상' THEN 30
-            WHEN '90일 이상' THEN 90
-        END AS duration
-    FROM CAR_RENTAL_COMPANY_DISCOUNT_PLAN
-),
 fee_calculation AS (
     SELECT 
-        th.history_id, 
-        CASE 
-            WHEN th.rental_duration < 7 THEN th.daily_fee * th.rental_duration
-            WHEN th.rental_duration >= 90 THEN th.daily_fee * th.rental_duration * (1 - COALESCE(MAX(plan.discount_rate), 0) / 100)
-            WHEN th.rental_duration >= 30 THEN th.daily_fee * th.rental_duration * (1 - COALESCE(MAX(plan.discount_rate), 0) / 100)
-            WHEN th.rental_duration >= 7 THEN th.daily_fee * th.rental_duration * (1 - COALESCE(MAX(plan.discount_rate), 0) / 100)
-        END AS fee
+        th.history_id,
+        th.daily_fee,
+        th.rental_duration,
+        dp.discount_rate,
+        th.daily_fee * th.rental_duration * 
+        (1 - COALESCE(dp.discount_rate, 0) / 100) AS fee
     FROM truck_history th
-    LEFT JOIN duration_type_to_number plan 
-    ON th.rental_duration >= plan.duration AND plan.car_type = '트럭'
-    GROUP BY th.history_id, th.daily_fee, th.rental_duration
+    LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN dp 
+    ON dp.car_type = '트럭' 
+    AND (
+        (th.rental_duration >= 90 AND dp.duration_type = '90일 이상') OR 
+        (th.rental_duration >= 30 AND th.rental_duration < 90 AND dp.duration_type = '30일 이상') OR 
+        (th.rental_duration >= 7 AND th.rental_duration < 30 AND dp.duration_type = '7일 이상')
+    )
 )
 SELECT 
     history_id, 
