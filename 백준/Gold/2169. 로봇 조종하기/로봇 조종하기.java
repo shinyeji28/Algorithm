@@ -1,56 +1,56 @@
-/*
-* dp
-* 위에서부터 한 행씩 반복
-* 1. 좌 -> 우 최대 값
-* 2. 우 -> 좌 최대 값
-* 3. 위 -> 아래 최대 값
-* */
-import java.io.*;
 import java.util.*;
-public class Main {
-    public static void main(String[] agrs) throws IOException{
+import java.io.*;
+
+public class Main{
+
+    public static void main(String[] agrs) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int[][] map = new int[n][m];
-        int[][] dp = new int[n][m];
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        for(int i=0;i<n;i++){
+        int[][] map = new int[N][M];
+
+        for(int i=0;i<N;i++){
             st = new StringTokenizer(br.readLine());
-            for(int j=0;j<m;j++){
+            for(int j=0;j<M;j++){
                 map[i][j] = Integer.parseInt(st.nextToken());
-                dp[i][j] = Integer.MIN_VALUE;
             }
         }
+
+
+        int[][] dp = new int[N][M];
         dp[0][0] = map[0][0];
-        int[] leftDp = new int[m];
-        int[] rightDp = new int[m];
+        for(int j=1;j<M;j++){
+            dp[0][j] = map[0][j] + dp[0][j-1];
+        }
 
-        for(int i=0;i<n;i++){
+        for(int i=1;i<N;i++){
 
-            Arrays.fill(leftDp, Integer.MIN_VALUE);
-            Arrays.fill(rightDp, Integer.MIN_VALUE);
-            leftDp[0] = (i==0? map[0][0] : dp[i-1][0] + map[i][0]);
-            for(int j=1;j<m;j++){
-                leftDp[j] = Math.max(leftDp[j-1], (i==0?Integer.MIN_VALUE : dp[i-1][j])) + map[i][j];
-                if(i==0){
-                    dp[i][j] = leftDp[j];
-                }
+            int[] rightDp = new int[M];
+            int[] leftDp = new int[M];
+            Arrays.fill(rightDp,Integer.MIN_VALUE);
+            Arrays.fill(leftDp,Integer.MIN_VALUE);
+
+            leftDp[0] = dp[i-1][0] + map[i][0];
+            for(int j=1;j<M;j++){ // 왼 -> 오
+                leftDp[j] = Math.max(leftDp[j-1], dp[i-1][j]) + map[i][j];
             }
-            if(i==0)continue;
-            rightDp[m-1] = dp[i-1][m-1] + map[i][m-1];
-
-            for(int j=m-2;j>=0;j--){
+            rightDp[M-1] = dp[i-1][M-1] + map[i][M-1];
+            for(int j=M-2;j>=0;j--){ // 오 -> 왼
                 rightDp[j] = Math.max(rightDp[j+1], dp[i-1][j]) + map[i][j];
             }
 
-            for(int j=0;j<m;j++){
-                dp[i][j] = Math.max(leftDp[j],rightDp[j]);
+            for(int j=0;j<M;j++){
+                dp[i][j] = Math.max(leftDp[j], rightDp[j]);
             }
         }
-        System.out.println(dp[n-1][m-1]);
+
+
+        System.out.println(dp[N-1][M-1]);
 
     }
-
 }
+
+
+
