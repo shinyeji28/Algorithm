@@ -10,12 +10,12 @@ class Solution {
         Arrays.sort(times);
         
         long left = 1;
-        long right = 1000000000 * 1000000000L;
+        long right = 1000000000L * 1000000000L;
         long answer = right;
 
         long mid = 0;
         while(left <= right){
-            mid = left + (right - left) / 2;
+            mid = left + (right - left) / 2L;
             
             // 심사 가능 여부 판단
             long num = 0;
