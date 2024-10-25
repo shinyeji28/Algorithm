@@ -6,6 +6,8 @@ import java.util.*;
 */
 class Solution {
     public int solution(int m, int n, int[][] puddles) {
+        
+        // 첫번째 방법
         int answer = 0;
         
                 
@@ -24,5 +26,7 @@ class Solution {
         }
         
         return dp[n-1][m-1];
+
     }
+    
 }
