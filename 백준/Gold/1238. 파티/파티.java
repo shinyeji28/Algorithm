@@ -9,7 +9,7 @@ public class Main {
             this.cost = cost;
         }
     }
-    static List<Node>[] graph;
+
     static int n;
     public static void main(String[] agrs) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,9 +18,12 @@ public class Main {
         int m = Integer.parseInt(st.nextToken());
         int x = Integer.parseInt(st.nextToken());
 
-        graph = new ArrayList[n+1];
+        List<Node>[] graph = new ArrayList[n+1];
+        List<Node>[] reverseGraph = new ArrayList[n+1];
+
         for(int i=0;i<n+1;i++){
             graph[i] = new ArrayList<>();
+            reverseGraph[i] = new ArrayList<>();
         }
 
         for(int i=0;i<m;i++){
@@ -30,17 +33,18 @@ public class Main {
             int cost = Integer.parseInt(st.nextToken());
 
             graph[from].add(new Node(to,cost));
+            reverseGraph[to].add(new Node(from,cost));
+
         }
 
         int[] totalCost = new int[n+1];
-        for(int i=1;i<=n;i++){
-            int[] dis = bfs(i);
-            totalCost[i] += dis[x];
-            if(i==x){
-                for(int j=1;j<n+1;j++){
-                    totalCost[j] += dis[j];
-                }
-            }
+        int[] dis = bfs(x, graph);
+        for(int j=1;j<n+1;j++){
+            totalCost[j] += dis[j];
+        }
+        dis = bfs(x, reverseGraph);
+        for(int j=1;j<n+1;j++){
+            totalCost[j] += dis[j];
         }
 
         int result = 0;
@@ -49,7 +53,7 @@ public class Main {
         }
         System.out.println(result);
     }
-    public static int[] bfs(int from){
+    public static int[] bfs(int from, List<Node>[] graph){
         PriorityQueue<Node> pq = new PriorityQueue<>((a,b)->a.cost-b.cost);
         boolean[] visited = new boolean[n+1];
         int[] distance = new int[n+1];
