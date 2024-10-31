@@ -1,55 +1,54 @@
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int[] students;
+    static int[] graph;
     static boolean[] visited;
     static boolean[] finished;
     static int count;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+        int T = Integer.parseInt(br.readLine());
+        for(int t=0;t<T;t++){
+            int n = Integer.parseInt(br.readLine());
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int t = scanner.nextInt();
-
-        while (t-- > 0) {
-            int n = scanner.nextInt();
-            students = new int[n + 1];
-            visited = new boolean[n + 1];
-            finished = new boolean[n + 1];
+            graph = new int[n+1];
+            visited = new boolean[n+1];
+            finished = new boolean[n+1];
             count = 0;
 
-            // 학생들의 선택 입력
-            for (int i = 1; i <= n; i++) {
-                students[i] = scanner.nextInt();
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for(int i=1;i<=n;i++){
+                int to = Integer.parseInt(st.nextToken());
+                graph[i]= to;
             }
-
-            // DFS로 사이클 탐색
-            for (int i = 1; i <= n; i++) {
-                if (!visited[i]) {
-                    dfs(i);
-                }
+            int sum = 0;
+            for(int i=1;i<n+1;i++){
+                if(visited[i])continue;
+                findCycle(i);
             }
+            sb.append(n-count).append('\n');
 
-            // 팀에 포함되지 않은 학생 수 출력
-            System.out.println(n - count);
         }
-        scanner.close();
+        System.out.println(sb);
     }
+    public static void findCycle(int from){
 
-    // DFS를 이용해 사이클 탐색
-    public static void dfs(int student) {
-        visited[student] = true;
-        int next = students[student];
+        if(visited[from])return;
+        visited[from] = true;
 
-        // 사이클을 찾은 경우
-        if (!visited[next]) {
-            dfs(next);
-        } else if (!finished[next]) { // 사이클이 완료되지 않았을 때
+        int next = graph[from];
+        findCycle(next);
+
+        if(!finished[next]){
             count++;
-            for (int i = next; i != student; i = students[i]) {
+            for(int i=next;i!=from;i=graph[i]){
                 count++;
             }
         }
 
-        finished[student] = true; // 탐색 완료 표시
+        finished[from] = true;
     }
+
 }
