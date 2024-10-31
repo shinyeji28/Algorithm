@@ -74,9 +74,6 @@ public class Main {
             }
         }
 
-        if(prevLandCnt!=landCnt) {
-            prevLandCnt = landCnt;
-            return false;
-        }else return true;
+        return prevLandCnt==landCnt;
     }
 }
