@@ -15,7 +15,7 @@ public class Main {
     static int n;
     static int[] subTrees;
     static boolean[] visited;
-    static int answer;
+    static long answer;
     public static void main(String[] agrs)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         n = Integer.parseInt(br.readLine());
@@ -50,7 +50,7 @@ public class Main {
         return subTreeContainMe;
     }
     // nC2
-    public static int combination(int cnt){
-        return (cnt * (cnt-1)) / 2;
+    public static long combination(int cnt){
+        return (long) cnt * (cnt-1) / 2;
     }
 }
