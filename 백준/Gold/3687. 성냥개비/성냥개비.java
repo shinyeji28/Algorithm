@@ -4,8 +4,7 @@
 *
 * 조합 시간 초과 : 최대 O(100C50)
 * 다이나익프로그래밍 : 동전문제 + 중복 사용 가능 O(100 * 10(0~9 수))
-*       - 구현방식 > 동전문제 > dp[i][j] : 성냥이 총 i개 일때, j숫자가 몇번 사용되었는지 저장
-*       - 저장방식 > 최대 50개의 숫자임으로 일차원 배열에 숫자 개수를 저장
+*       - 구현방식 > 동전문제 > dp[i] : 성냥이 총 i개 일때, 어떤 수를 최대/최소로 가지는지
 * */
 
 import java.util.*;
@@ -17,10 +16,9 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         int[] usedMatches = new int[]{6, 2, 5, 5, 4, 5, 6, 3, 7, 6};  // 사용된 성냥 수
         String[] dpMin = new String[101]; // [사용된 성냥 총 수]
-        String[] dpMax = new String[101]; // [사용된 성냥 총 수]
+        String[] maxArray = new String[101];
 
         Arrays.fill(dpMin, "1000000000000000000000000000000000000000000000000");
-        Arrays.fill(dpMax, "");
 
         dpMin[2] = "1";
         dpMin[3] = "7";
@@ -29,14 +27,6 @@ public class Main {
         dpMin[6] = "6";
         dpMin[7] = "8";
         dpMin[8] = "10";
-
-        dpMax[2] = "1";
-        dpMax[3] = "7";
-        dpMax[4] = "11";
-        dpMax[5] = "71";
-        dpMax[6] = "111";
-        dpMax[7] = "711";
-        dpMax[8] = "1111";
 
         for (int i = 9; i <= 100; i++) {
             for (int j = 0; j < usedMatches.length; j++) {
@@ -48,13 +38,23 @@ public class Main {
                         || (dpMin[i].length()==candidate.length() && candidate.compareTo(dpMin[i])<0)){
                     dpMin[i] = candidate;
                 }
-                // 최대
-                candidate = dpMax[i-c] + j;
-                if(dpMax[i].length() < candidate.length()
-                        || (dpMax[i].length()==candidate.length() && candidate.compareTo(dpMax[i])>0)){
-                    dpMax[i] = candidate;
-                }
             }
+        }
+
+        //최대
+        for(int i=2;i<=100;i++){
+            // 짝수면 몫만큼 1을 반복
+            // 홀면서 몫마큼 1을 반복하지만 맨 앞자리는 7로 변경
+
+            StringBuilder repeatSb = new StringBuilder();
+
+            if (i % 2 == 0) repeatSb.append("1");
+            else repeatSb.append("7");
+            for(int j=0;j<i/2 -1;j++) {
+                repeatSb.append("1");
+            }
+            maxArray[i] = repeatSb.toString();
+
         }
 
 
@@ -62,7 +62,7 @@ public class Main {
 
         for (int t = 0; t < T; t++) {
             int n = Integer.parseInt(br.readLine());
-            sb.append(dpMin[n]+" "+dpMax[n]).append('\n');
+            sb.append(dpMin[n]+" "+maxArray[n]).append('\n');
 
         }
         System.out.println(sb);
