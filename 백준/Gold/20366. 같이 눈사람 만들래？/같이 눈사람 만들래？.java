@@ -2,6 +2,8 @@
 * 1. 조합으로 1번 눈사람 크기 구하기
 * 2. 1번 눈사람에 해당하지 않는 눈덩이로 또 다른 조합 구하기 (투포인터로 1번 눈사람의 조합에 해당하지 않는 조합 구하기)
 * 3. 두 눈사람의 차의 최소 구하기
+
+n^3
 * */
 
 import java.util.*;
@@ -29,14 +31,6 @@ public class Main{
                 int l=i+1;
                 int r=j-1;
                 while(l<r){
-                    if(l==i||l==j){
-                        l++;
-                        continue;
-                    }
-                    if(r==i||r==j){
-                        r--;
-                        continue;
-                    }
                     int snowman2 = arr[l] + arr[r];
                     int diff = Math.abs(snowman1 - snowman2);
                     minDiff = Math.min(minDiff, diff);
