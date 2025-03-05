@@ -1,9 +1,9 @@
-
 import java.util.*;
 import java.io.*;
 public class Main{
     static List<Integer>[] graph;
     static boolean[] visited;
+    static int cnt;
     public static void main(String[] agrs) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -24,20 +24,24 @@ public class Main{
         }
         for(int i=0;i<n;i++){
             if(!visited[i]) {
-                visited[i] = true;
-                int cnt = countBelongTo(i);
+                cnt = 0;
+                countBelongTo(i);
                 answer = (answer * cnt) % 1000000007;
             }
         }
         System.out.println(answer);
     }
-    public static int countBelongTo(int from){
-        int cnt = 1;
+    public static void countBelongTo(int from){
+        cnt++;
+        visited[from] = true;
+        boolean leaf = true;
         for(Integer to: graph[from]){
             if(visited[to])continue;
-            visited[to] = true;
-            cnt += countBelongTo(to);
+            leaf = true;
+            countBelongTo(to);
         }
-        return cnt;
+        if(leaf){
+            return;
+        }
     }
 }
