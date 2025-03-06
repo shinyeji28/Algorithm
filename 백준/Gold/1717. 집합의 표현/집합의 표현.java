@@ -34,11 +34,12 @@ public class Main{
     public static void union(int a, int b){
         int f1 = find(a);
         int f2 = find(b);
-        if(f1 < f2){
-            uf[f2] = f1;
-        }else{
-            uf[f1] = f2;
-        }
+//        if(f1 < f2){
+//            uf[f2] = f1;
+//        }else{
+//            uf[f1] = f2;
+//        }
+        if(f1!=f2) uf[f1] = f2;  
     }
     public static int find(int a){
         if(uf[a] != a) {
