@@ -12,14 +12,16 @@ public class Main{
         }
         Arrays.sort(arr);
         int cnt = 0;
-        for(int i=0;i<n-1;i++){
-            if(arr[i] >= m) break;
-            int target = m - arr[i];
-            if(target > arr[i]) {
-                // 이진탐색으로 target 찾기
-                int idx = Arrays.binarySearch(arr, i+1, n, target);
-                if(idx >= 0) cnt++;
-            }
+        int left = 0;
+        int right = n-1;
+        while(left < right){
+            int sum = arr[left] + arr[right];
+            if(sum == m){
+                cnt++;
+                left++;
+                right--;
+            }else if(sum > m) right--;
+            else left++;
         }
         System.out.println(cnt);
     }
