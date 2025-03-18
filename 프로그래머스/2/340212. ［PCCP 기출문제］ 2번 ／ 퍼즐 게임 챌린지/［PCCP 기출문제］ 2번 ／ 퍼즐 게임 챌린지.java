@@ -1,41 +1,40 @@
-// 누적합
-// 이분탐색
+/*
+난이도 > 숙련도 : ( curTime + preTime ) * 틀릴 수(난이도-레벨) + curTime 의 시간을 사용
 
-import java.util.*;
+
+*/
+
 class Solution {
     public long solution(int[] diffs, int[] times, long limit) {
-        long answer = Long.MAX_VALUE;
+        long answer = limit;
         
-        long[] sumTime = new long[times.length];
-        
-        sumTime[0] = times[0];
-        for(int i=1;i<times.length;i++){
-            sumTime[i] = times[i-1] + times[i];
-        }
-        
-        long left = 0;
-        long right = Long.MAX_VALUE;
-        long mid = 0;
-        while(left<=right){
-            mid = (left + right) / 2;  // 숙련도
-            // 시간 구하기
-            long time = 0;
-            boolean flag = false;
-            for(int i=0;i<diffs.length;i++){
-                if(diffs[i] <= mid) time += times[i];
-                else time += sumTime[i]*(diffs[i] - mid) + times[i];
-                if(time > limit){
-                    flag = true;
-                    break;
-                }
-            }
-            if(!flag){
-                if(mid!=0)answer = Math.min(mid, answer);
+        long left = 1;
+        long right = limit;
+        long mid = 1;
+        while(left <= right){
+            mid = (left + right) / 2;
+            long time = calcTime(mid, diffs, times, limit);
+            if(time <= limit){
                 right = mid - 1;
-            }else{
-                left = mid + 1;
-            }
+                answer = Math.min(answer, mid);
+            }else left = mid + 1;
+            
         }
         return answer;
+    }
+    public static long calcTime(long level, int[] diffs, int[] times, long limit){
+        long time = 0;
+        
+        for(int i=0;i<diffs.length;i++){
+            if(diffs[i]<=level){
+                time += times[i];
+            }else{
+                long wrongCnt = diffs[i] - level;
+                time += (times[i] + times[i-1]) * wrongCnt + times[i];
+            }
+            if(time > limit) return limit+1;
+        }
+        
+        return time;
     }
 }
