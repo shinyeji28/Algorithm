@@ -5,14 +5,13 @@
 */
 
 class Solution {
-    public long solution(int[] diffs, int[] times, long limit) {
-        long answer = limit;
+    public int solution(int[] diffs, int[] times, long limit) {
+        int answer = 100001;
         
-        long left = 1;
-        long right = limit;
-        long mid = 1;
+        int left = 1;
+        int right = 100001;
         while(left <= right){
-            mid = (left + right) / 2;
+            int mid = (left + right) / 2;
             long time = calcTime(mid, diffs, times, limit);
             if(time <= limit){
                 right = mid - 1;
@@ -22,7 +21,7 @@ class Solution {
         }
         return answer;
     }
-    public static long calcTime(long level, int[] diffs, int[] times, long limit){
+    public static long calcTime(int level, int[] diffs, int[] times, long limit){
         long time = 0;
         
         for(int i=0;i<diffs.length;i++){
