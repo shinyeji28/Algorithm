@@ -1,97 +1,130 @@
 import java.util.*;
 class Solution {
-    static final int SIZE = 100;
-    static List<List<Integer>> history = new ArrayList<>();
-    static int maxLen = 0;
-    
-    public static class Node{
+    static int[][] points;
+    static int[] dx = new int[]{-1,1,0,0};
+    static int[] dy = new int[]{0,0,-1,1};
+    static int size = 100;
+    static List<List<Integer>> paths = new ArrayList<>();
+    static public class Node{
         int x;
         int y;
-        List<Integer> path;
-        public Node(int x, int y, boolean newArray){
+        int d;
+        List<Integer> routes;
+        public Node(int x, int y, int d, List<Integer> routes){
             this.x = x;
             this.y = y;
-            this.path = new ArrayList<>();
-            if(newArray) this.path.add(SIZE * x + y);
-        }
-        public Node(List<Integer> prevPath, int x, int y){
-            this.x = x;
-            this.y = y;
-            this.path = new ArrayList<>(prevPath);
-            this.path.add(SIZE * x + y);
-            
+            this.d = d;
+            this.routes = new ArrayList<>(routes);
+            this.routes.add(x*size+y);
         }
     }
-    public int solution(int[][] points, int[][] routes) {
+    
+    public int solution(int[][] point, int[][] routes) {
+        int answer = 0;
+        points = point;
         
-        int crush = 0;
         
-        for(int[] route: routes){
+        for(int[] r : routes){
             boolean newList = true;
-            for(int i =0;i<route.length-1;i++){
-                int sp = route[i]-1;
-                int ep = route[i+1]-1;
-                bfs(points[sp][0]-1, points[sp][1]-1, points[ep][0]-1, points[ep][1]-1, newList);
-                newList = false;
+            for(int i=0;i<r.length-1;i++){
+               bfs(r[i]-1, r[i+1]-1, newList);
+               newList = false;
             }
         }
         
-        for(int j=0;j<maxLen;j++){
-            int[] check = new int[SIZE*SIZE];
-            for(int i=0;i<history.size();i++){
-                if(history.get(i).size() <= j) continue;
-                                
-                int num = history.get(i).get(j);
+        answer = checkConflict();
+        
+        return answer;
+    }
+    public static int checkConflict(){
+
+        int cnt=0;
+        // int j=0;
+        int maxSize = 0;
+        for(int i=0;i<paths.size();i++){
+            maxSize = Math.max(maxSize, paths.get(i).size());
+        }        
+        
+//         while(j < maxSize){
+//             boolean[] visited = new boolean[size*size];
+//             boolean[] flag = new boolean[size*size];
+//             int i = 0;
+//             while(i < paths.size()){
+//                 if(j >= paths.get(i).size()){
+//                     i++;
+//                     continue;
+//                 }
+//                 int idx = paths.get(i).get(j);
+               
+//                 if(!flag[idx] && visited[idx]){
+//                     flag[idx] = true;
+//                     cnt++;
+//                 }
+//                 visited[idx] = true;
+//                 i++;
+//             }
+//             j++;
+//         }
+        for(int j=0;j<maxSize;j++){
+            int[] check = new int[size*size];
+            for(int i=0;i<paths.size();i++){
+                if(paths.get(i).size() <= j) continue;
+
+                int num = paths.get(i).get(j);
                 if(check[num]==1){
-                    crush++;
+                    cnt++;
                 }
                 check[num]++;
             }
         }
-        
-        return crush;
+        return cnt;
+
     }
-    public static void bfs(int sx,int sy,int ex,int ey, boolean newList){
-        int[] dx = new int[]{-1,1,0,0};
-        int[] dy = new int[]{0,0,-1,1};
+    
+    public static void bfs(int sIdx, int eIdx, boolean newList){
+        int sx = points[sIdx][0]-1;
+        int sy = points[sIdx][1]-1;
+        int ex = points[eIdx][0]-1;
+        int ey = points[eIdx][1]-1;
+        Queue<Node> pq = new ArrayDeque<>();
         
-        Queue<Node> q = new ArrayDeque<>();
-        boolean[][] visited = new boolean[SIZE][SIZE];
-        int[][] distance = new int[SIZE][SIZE];
-        
-        for(int[] dis : distance){
-            Arrays.fill(dis, Integer.MAX_VALUE);
-        }
-       
-        q.offer(new Node(sx, sy, newList));
-        
+        pq.offer(new Node(sx, sy,0, new ArrayList<>()));
+        boolean[][] visited = new boolean[size][size];
         visited[sx][sy] = true;
-        distance[sx][sx] = 0;
         
-        while(!q.isEmpty()){
-            Node cur = q.poll();
-            int x = cur.x;
-            int y = cur.y;
-            if(x == ex && y == ey){
-                if(newList){
-                    history.add(cur.path);
-                }else{
-                    history.get(history.size()-1).addAll(cur.path);
+        // int[][] distance = new int[size][size];
+        // for(int i=0;i<size;i++){
+        //     Arrays.fill(distance[i], Integer.MAX_VALUE);
+        // }
+        // distance[sx][sy] = 0;
+        while(!pq.isEmpty()){
+            Node node = pq.poll();
+            if(ex == node.x && ey == node.y){
+                if(newList) paths.add(node.routes);
+                else {
+                    node.routes.remove(0);
+                    paths.get(paths.size()-1).addAll(node.routes);
                 }
-                maxLen = Math.max(maxLen, history.get(history.size()-1).size());
                 return;
             }
+            
             for(int d=0;d<4;d++){
-                int nx = x + dx[d];
-                int ny = y + dy[d];
-                if(nx<0||ny<0||nx>=SIZE||ny>=SIZE||visited[nx][ny])continue;
-                if(distance[nx][ny] > distance[x][y] + 1){
-                    distance[nx][ny] = distance[x][y] + 1;
-                    q.offer(new Node(cur.path, nx,ny));
+                int nx = node.x + dx[d];
+                int ny = node.y + dy[d];
+
+                if(nx<0||ny<0||nx>=size||ny>=size)continue;
+                if(visited[nx][ny])continue;
+                
+                // if(distance[nx][ny] > distance[node.x][node.y] + 1){
+                //     distance[nx][ny] = distance[node.x][node.y] + 1;
                     visited[nx][ny] = true;
-                }
+                    pq.offer(new Node(nx, ny, node.d+1, node.routes));
+                // }
+
             }
         }
+        
     }
- 
+    
 }
+
