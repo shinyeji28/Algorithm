@@ -1,10 +1,10 @@
 # [level 3] N으로 표현 - 42895 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42895#qna) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42895) 
 
 ### 성능 요약
 
-메모리: 86.1 MB, 시간: 48.50 ms
+메모리: 93.9 MB, 시간: 41.77 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 10월 25일 13:59:33
+2025년 04월 01일 23:12:55
 
 ### 문제 설명
 
