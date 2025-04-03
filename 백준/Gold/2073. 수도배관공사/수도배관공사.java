@@ -21,7 +21,6 @@ public class Main{
 
         int[][] dp = new int[P+1][D+1];
         for(int i=0;i<=P;i++){
-            Arrays.fill(dp[i],-1);
             dp[i][0] = Integer.MAX_VALUE;
         }
 
@@ -34,7 +33,7 @@ public class Main{
                 dp[i][j] = dp[i-1][j];
 
                 // 파이프 사용하기
-                if(j-l>=0 && dp[i-1][j-l]!=-1)dp[i][j] = Math.max(dp[i][j], Math.min(c, dp[i-1][j-l]));
+                if(j-l>=0 && dp[i-1][j-l]!=0)dp[i][j] = Math.max(dp[i][j], Math.min(c, dp[i-1][j-l]));
 
             }
         }
