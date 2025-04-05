@@ -4,18 +4,22 @@ class Solution {
         
         String answer = ""; 
         
-        // 이름 정렬 후 선형탐색으로 이름이 다른다면 완주하기 못한 선수임 (완주 못한 선수는 1명이기 때문)
-        
-        Arrays.sort(participant);
-        Arrays.sort(completion);
-        answer = participant[participant.length-1];
-
-        for(int i=0;i<completion.length;i++){
-            if(!participant[i].equals(completion[i])){
-                answer = participant[i];
+        HashMap<String, Integer> hm = new HashMap<>();
+        for(String c : completion){
+            hm.put(c, hm.getOrDefault(c,0)+1);
+        }
+        for(String p : participant){
+            if(!hm.containsKey(p)){
+                answer = p;
                 break;
             }
-        } 
+            int value = hm.get(p);
+            if(value == 1){
+                hm.remove(p);
+            }else{
+                hm.replace(p,value-1);
+            }
+        }
         return answer;
     }
 }
