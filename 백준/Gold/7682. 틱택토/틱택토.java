@@ -1,103 +1,70 @@
-import java.util.*;
-import java.io.*;
-public class Main {
 
-    public static void main(String[] agrs) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        while(true){
-            String input = br.readLine();
-            if(input.equals("end"))break;
+    import java.io.*;
+    import java.util.*;
+    public class Main{
+        public static void main(String[] args) throws IOException {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            StringBuilder sb = new StringBuilder();
 
-            char[] map = input.toCharArray();
+            while(true){
+                String input = br.readLine();
+                if(input.equals("end"))break;
 
-            int xCnt = 0;
-            int oCnt = 0;
-            for(int i=0;i<map.length;i++){
-                if(map[i] == 'X') xCnt++;
-                else if(map[i] == 'O') oCnt++;
-            }
+                boolean isValid = true;
+                int x = 0;
+                int o = 0;
+                for(int i=0;i<input.length();i++){
+                    if(input.charAt(i) == 'X') x++;
+                    if(input.charAt(i)== 'O') o++;
+                }
 
-            // !(x - 1 = o || x = o) -> invalid
-            if(!(xCnt - 1 == oCnt || xCnt == oCnt)) {
-                sb.append("invalid").append('\n');
-                continue;
-            }
-
-            boolean[] winInfo = isWinSomeOne(map);
-
-            // 둘다 빙고
-            if(winInfo[0] && winInfo[1]){
-                sb.append("invalid").append('\n');
-                continue;
-            }
-
-            // 게임이 끝나지 않음
-            if((9-(xCnt + oCnt)) != 0 && !winInfo[0] && !winInfo[1]){
-                sb.append("invalid").append('\n');
-                continue;
-            }
-
-            // (9 -(x+o))==0 && x - 1 != o   -> invalid
-            if(((9-(xCnt + oCnt)) == 0) && xCnt - 1 != oCnt){
-                sb.append("invalid").append('\n');
-                continue;
-            }
-            // (3X && x - 1 != 0) || (3O && x != o) -> invalid
-            if((winInfo[0] && xCnt - 1 !=oCnt) || (winInfo[1] && xCnt!=oCnt) ){
-                sb.append("invalid").append('\n');
-                continue;
-            }
-            sb.append("valid").append('\n');
-        }
-        System.out.println(sb);
-    }
-    public static boolean[] isWinSomeOne(char[] map){
-
-        boolean x = false;
-        boolean o = false;
-
-        for(int i=0;i<3;i++){
-            // 행으로 win
-            char prev = '0';
-            int cnt = 0;
-            for(int j=i;j<9;j+=3){
-                if(j==i) prev = map[j];
-                if(map[j] != prev) break;
-                else{
-                    cnt++;
-                    if(cnt == 3){
-                        if(map[j] == 'X') x = true;
-                        if(map[j] == 'O') o = true;
+                char[][] map = new char[3][3];
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<3;j++){
+                        map[i][j] = input.charAt(i*3+j);
                     }
                 }
-            }
 
-            // 열로 win
-            cnt = 0;
-            for(int j=i*3;j<9;j++){
-                if(j==i*3) prev = map[j];
-                if(map[j] != prev) break;
-                else{
-                    cnt++;
-                    if(cnt == 3){
-                        if(map[j] == 'X') x = true;
-                        if(map[j] == 'O') o = true;
+
+
+                if(x-1 == o || x==o ){
+
+                    boolean xWin = false;
+                    boolean oWin = false;
+                    for(int i=0;i<3;i++){
+                        if(map[i][0] == map[i][1] && map[i][1] == map[i][2]) {
+                            if(map[i][0] == 'X')xWin = true;
+                            if(map[i][0] == 'O')oWin = true;
+                        }
+                        if(map[0][i] == map[1][i] && map[1][i] == map[2][i]) {
+                            if(map[0][i] == 'X')xWin = true;
+                            if(map[0][i] == 'O')oWin = true;
+                        }
                     }
+                    if(map[0][0] == map[1][1] && map[1][1] == map[2][2]) {
+                        if(map[0][0] == 'X')xWin = true;
+                        if(map[0][0] == 'O')oWin = true;
+                    }
+                    if(map[0][2] == map[1][1] && map[1][1] == map[2][0]) {
+                        if(map[0][2] == 'X')xWin = true;
+                        if(map[0][2] == 'O')oWin = true;
+                    }
+                    if(xWin && oWin) isValid = false;
+                    else{
+                        if(xWin && x-1!=o) isValid = false;
+                        if(oWin && x != o) isValid = false;
+                    }
+                    if(x+o!=9 && !xWin && !oWin) isValid = false;
+
+                }else{
+                    isValid = false;
                 }
+
+                if(isValid)sb.append("valid");
+                else sb.append("invalid");
+                sb.append('\n');
             }
+            System.out.println(sb);
         }
 
-        if(map[0]==map[4] && map[4]==map[8]){
-            if(map[0] == 'X') x = true;
-            if(map[0] == 'O') o = true;
-        }
-        if(map[2]==map[4] && map[4]==map[6]){
-            if(map[2] == 'X') x = true;
-            if(map[2] == 'O') o = true;
-        }
-
-
-        return new boolean[]{x,o};
     }
-}
