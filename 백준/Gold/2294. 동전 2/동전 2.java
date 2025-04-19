@@ -14,8 +14,9 @@
             for(int i=0;i<n;i++){
                 coins[i] = Integer.parseInt(br.readLine());
             }
-            for(int i=1;i<k+1;i++){
-                for(int coin: coins){
+            for(int coin: coins){
+
+                for(int i=1;i<k+1;i++){
                     if(i-coin >= 0 && dp[i-coin]!=Integer.MAX_VALUE) dp[i] = Math.min(dp[i],dp[i-coin] + 1);
                 }
             }
