@@ -1,103 +1,84 @@
-import java.awt.dnd.DropTarget;
-import java.util.*;
-import java.io.*;
 
-public class Main {
+    import java.io.*;
+    import java.util.*;
 
-    static int n;
-    static int[][] map;
-    static int[] dx = new int[]{0,1,0,-1};
-    static int[] dy = new int[]{1,0,-1,0};
+    public class Main{
+        static int[] dx = new int[]{0,1,0,-1};
+        static int[] dy = new int[]{1,0,-1,0};
+        static Queue<int[]> direction;
+        static int n;
+        static ArrayDeque<int[]> snake = new ArrayDeque<>();
+        static int[][] map;
+        static int time=0;
 
-    static ArrayDeque<int[]> deq;
+        public static void main(String[] args) throws IOException {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            n = Integer.parseInt(br.readLine());
+            int k = Integer.parseInt(br.readLine());
+            map = new int[n][n];
 
-    public static class Node{
-        int time;
-        char rotation;
-        public Node(int time, char rotation){
-            this.time = time;
-            this.rotation = rotation;
+            for(int i=0;i<k;i++){
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                int r = Integer.parseInt(st.nextToken())-1;
+                int c = Integer.parseInt(st.nextToken())-1;
+
+                map[r][c] = 1; // 사과
+            }
+            int l = Integer.parseInt(br.readLine());
+            direction = new ArrayDeque<>();
+            for(int i=0;i<l;i++){
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                int t = Integer.parseInt(st.nextToken());
+                int d = (st.nextToken().charAt(0) == 'D')? 1 : 3;
+                direction.offer(new int[]{t,d});
+            }
+            move();
+            System.out.println(time+1);
+
         }
-    }
+        public static void move(){
 
-    public static Queue<Node> q;
-    static boolean done = false;
-    public static void main(String[] agrs) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
-        int k = Integer.parseInt(br.readLine());
-        map = new int[n][n];
-        for(int i=0;i<k;i++){
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            map[Integer.parseInt(st.nextToken())-1][Integer.parseInt(st.nextToken())-1] = 2;  // 사과
-        }
-        int l = Integer.parseInt(br.readLine());
-        q = new ArrayDeque<>();
-        for(int i=0;i<l;i++){
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            q.offer(new Node(Integer.parseInt(st.nextToken()), st.nextToken().charAt(0)));
-        }
+            snake.offer(new int[]{0,0});
+            map[0][0] = 2; // 스네이크
+            int dir = 0;
 
-        System.out.println(solution()+1);
-    }
-    public static int solution(){
-
-        int d = 0;
-        map[0][0] = 1;
-        deq = new ArrayDeque<>();
-
-        deq.offerLast(new int[]{0,0});
-        int time = 0;
-        while(!q.isEmpty()){
-            Node node = q.poll();
-            time += straight(deq.peekLast()[0], deq.peekLast()[1], d,node.time - time);
-
-            if(done)break;
-            switch (node.rotation){
-                case 'D':
-                    d = (d+1) % 4;
-                    break;
-                case 'L':
-                    d = (d+3) % 4;
-                    break;
+            while(!direction.isEmpty()){
+                int[] cur = direction.poll();
+                int t = cur[0];
+                int d = cur[1];
+                while(time < t){
+                    // 직진이동
+                    if(!goStraight(dir)) return;
+                }
+                // 방향 회전
+                dir = (dir + d) % 4;
+            }
+            while(true) {
+                if(!goStraight(dir)) return;
             }
 
+
         }
-        if(!done){
-            time += straight(deq.peekLast()[0], deq.peekLast()[1], d,n);
-        }
-        return time;
-    }
-    public static int straight(int x, int y, int d, int time){
+        public static boolean goStraight(int dir){
+            int[] pos = snake.peekFirst();
+            int x = pos[0];
+            int y = pos[1];
 
-//        int nx = x + (node.time - time) + dx[d];
-//        int ny = y + (node.time - time) + dy[d];
-//        if(nx<0 || ny<0 || nx>=n || ny>=n || map[nx][ny] == 1 ) {
-//
-//            time += Math.abs(x - nx) + Math.abs(x - nx);
-//            break;
-//        }
+            int nx = x + dx[dir];
+            int ny = y + dy[dir];
 
-        int i;
-        int nx = x;
-        int ny = y;
-
-        for(i=0;i<time;i++){
-            nx = nx + dx[d];
-            ny = ny + dy[d];
-            if(nx<0 || ny<0 || nx>=n || ny>=n || map[nx][ny] == 1){
-                done = true;
-                break;  // 벽에 닿았을 때, 몸에 부딪혔을 때
+            if(nx<0||ny<0||nx>=n||ny>=n || map[nx][ny] == 2) {
+                return false;
             }
-
-            if(map[nx][ny]!=2){
-                int[] remove = deq.pollFirst();
-                map[remove[0]][remove[1]] = 0;
+            // 사과를 안 먹으면 꼬리 제거
+            if(map[nx][ny] != 1){
+                int[] cur = snake.pollLast();
+                map[cur[0]][cur[1]] = 0;
             }
-            map[nx][ny] = 1;
-            deq.offerLast(new int[]{nx, ny});
+            snake.offerFirst(new int[]{nx,ny});
+            map[nx][ny] = 2;
+            time++;
 
+            return true;
         }
-        return i;
     }
-}
