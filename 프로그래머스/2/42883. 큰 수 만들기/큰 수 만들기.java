@@ -1,28 +1,28 @@
+
 import java.util.*;
+/*
+stack : peek가 arr보다 낮으면 pop
+*/
 class Solution {
     public String solution(String number, int k) {
         String answer = "";
-        Stack<Character> stack = new Stack<>();
-        stack.push(number.charAt(0));
-        
-        int i = 1;
-        A: for(i=1;i<number.length();i++){
-            char c = number.charAt(i);
-            while(k>0 && !stack.isEmpty() && stack.peek() < c){
-                stack.pop();
+        ArrayDeque<Character> q = new ArrayDeque<>();
+        for(int i=0;i<number.length();i++){
+            char num = number.charAt(i);
+            
+            while(!q.isEmpty() && q.peekLast() < num && k > 0){
+                q.pollLast();
                 k--;
-                if(k <=0)break A;
             }
-            stack.push(c);
-
+            q.offerLast(num);
         }
-        while(!stack.isEmpty()){
-            answer = stack.pop() + answer;
+        while(!q.isEmpty() && k>0){
+            q.pollLast();
+            k--;
         }
-        answer += number.substring(i, number.length()); 
-        answer = answer.substring(0, answer.length()-k); 
-    
-
+        while(!q.isEmpty()){
+            answer += q.pollFirst();
+        }
         return answer;
     }
 }
