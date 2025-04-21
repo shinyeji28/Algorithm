@@ -1,49 +1,52 @@
 import java.util.*;
+/*
+최소 신장 트리 - 크루스칼 알고리즘
+*/
 class Solution {
-    static List<Node>[] graph;
-    public static class Node{
+    static class Node{
         int to;
-        int v;
-        public Node(int to, int v){
+        int cost;
+        public Node(int to, int cost){
             this.to = to;
-            this.v = v;
+            this.cost = cost;
         }
     }
+    static List<Node>[] graph;
     public int solution(int n, int[][] costs) {
         int answer = 0;
         
-       graph = new ArrayList[n];
+        graph = new ArrayList[n];
         for(int i=0;i<n;i++){
             graph[i] = new ArrayList<>();
         }
+        
         for(int[] cost : costs){
             graph[cost[0]].add(new Node(cost[1],cost[2]));
             graph[cost[1]].add(new Node(cost[0],cost[2]));
         }
         
         answer = bfs(n);
-        
-        
         return answer;
     }
     public static int bfs(int n){
-        PriorityQueue<Node> q = new PriorityQueue<>((a,b)->a.v-b.v);
+        PriorityQueue<Node> pq = new PriorityQueue<>((a,b)->a.cost-b.cost);
         boolean[] visited = new boolean[n];
         
-        q.offer(new Node(0,0));
-        int sum = 0;
-        while(!q.isEmpty()){
-            Node node = q.poll();
-            int to = node.to;
-            int v = node.v;
-            if(visited[to])continue;
-            visited[to] = true;
-            sum += v;
-            for(Node next : graph[to]){
-                q.offer(new Node(next.to, next.v));
+        int total = 0;
+        
+        pq.offer(new Node(0,0));
+        while(!pq.isEmpty()){
+            Node cur = pq.poll();
+            int node = cur.to;
+            int cost = cur.cost;
+            if(visited[node])continue;
+            visited[node] = true;
+            total += cost;
 
+            for(Node next : graph[node]){
+                pq.offer(new Node(next.to,next.cost));
             }
         }
-        return sum;
+        return total;
     }
 }
