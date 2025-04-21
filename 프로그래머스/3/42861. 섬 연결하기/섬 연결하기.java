@@ -1,52 +1,35 @@
-import java.util.*;
 /*
-최소 신장 트리 - 프림 알고리즘 : PQ, 인접 간선만 넣기(BFS) 
+최소 신장 트리 - 크루스칼 알고리즘 : 가중치 오름차순 정렬, union-find (사이클 발생 탐색)
 */
+import java.util.*;
 class Solution {
-    static class Node{
-        int to; 
-        int cost;
-        public Node(int to, int cost){
-            this.to = to;
-            this.cost = cost;
-        }
-    }
-    static List<Node>[] graph;
+    static int[] parents;
+    
     public int solution(int n, int[][] costs) {
         int answer = 0;
-        
-        graph = new ArrayList[n];
+        parents = new int[n];
         for(int i=0;i<n;i++){
-            graph[i] = new ArrayList<>();
+            parents[i] = i;
         }
         
-        for(int[] cost : costs){
-            graph[cost[0]].add(new Node(cost[1],cost[2]));
-            graph[cost[1]].add(new Node(cost[0],cost[2]));
+        Arrays.sort(costs, (a,b)->a[2]-b[2]);
+
+        for(int[] cost:costs){
+            if(find(cost[0]) == find(cost[1]))continue;
+            union(cost[0],cost[1]);
+            answer += cost[2];
         }
         
-        answer = bfs(n);
         return answer;
     }
-    public static int bfs(int n){
-        PriorityQueue<Node> pq = new PriorityQueue<>((a,b)->a.cost-b.cost);
-        boolean[] visited = new boolean[n];
-        
-        int total = 0;
-        
-        pq.offer(new Node(0,0));
-        while(!pq.isEmpty()){
-            Node cur = pq.poll();
-            int node = cur.to;
-            int cost = cur.cost;
-            if(visited[node])continue; 
-            visited[node] = true;
-            total += cost;
-
-            for(Node next : graph[node]){
-                pq.offer(new Node(next.to,next.cost));
-            }
-        }
-        return total;
+    public static void union(int a, int b){
+        int fa = find(a);
+        int fb = find(b);
+        if(fa <= fb) parents[fb] = fa;
+        else parents[fa] = fb;
+    }
+    public static int find(int a){
+        if(parents[a] == a)return a;
+        return find(parents[a]);
     }
 }
