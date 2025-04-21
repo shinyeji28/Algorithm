@@ -1,32 +1,23 @@
 import java.util.*;
-/*
-     
-     dp[i][j] = dp[i-1][j] + dp[i][j-1]
-     웅덩이면 pass
-*/
 class Solution {
+    static final int MOD = 1000000007;
     public int solution(int m, int n, int[][] puddles) {
         
-        // 첫번째 방법
-        int answer = 0;
+        int[][] dp = new int[n+1][m+1];
+        boolean[][] map = new boolean[n+1][m+1];
         
-                
-        int[][] dp = new int[n][m];
-        dp[0][0] = 1;
-            
-        for(int[] p : puddles){
-            dp[p[1]-1][p[0]-1] = -1;
+        for(int[] puddle : puddles){
+            map[puddle[1]][puddle[0]] = true;
         }
-
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if((i==0&&j==0) || dp[i][j] == -1) continue;
-                dp[i][j] = (((i-1 < 0 || dp[i-1][j]==-1)?0:dp[i-1][j]) + ((j-1 < 0 || dp[i][j-1]==-1)?0:dp[i][j-1])) % 1000000007;
+        
+        dp[1][1] = 1;
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(i==1 && j==1)continue;
+                if(map[i][j]) continue;
+                dp[i][j] = (dp[i-1][j] + dp[i][j-1]) % MOD;
             }
         }
-        
-        return dp[n-1][m-1];
-
+        return dp[n][m];
     }
-    
 }
