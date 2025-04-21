@@ -1,6 +1,6 @@
 /*
 최소 신장 트리 - 크루스칼 알고리즘 : 가중치 오름차순 정렬, union-find (사이클 발생 탐색)
-*/
+*/ 
 import java.util.*;
 class Solution {
     static int[] parents;
@@ -30,6 +30,6 @@ class Solution {
     }
     public static int find(int a){
         if(parents[a] == a)return a;
-        return find(parents[a]);
+        return parents[a] = find(parents[a]);
     }
 }
