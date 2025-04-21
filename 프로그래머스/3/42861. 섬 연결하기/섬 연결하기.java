@@ -1,10 +1,10 @@
 import java.util.*;
 /*
-최소 신장 트리 - 크루스칼 알고리즘
+최소 신장 트리 - 프림 알고리즘 : PQ, 인접 간선만 넣기(BFS) 
 */
 class Solution {
     static class Node{
-        int to;
+        int to; 
         int cost;
         public Node(int to, int cost){
             this.to = to;
@@ -39,7 +39,7 @@ class Solution {
             Node cur = pq.poll();
             int node = cur.to;
             int cost = cur.cost;
-            if(visited[node])continue;
+            if(visited[node])continue; 
             visited[node] = true;
             total += cost;
 
