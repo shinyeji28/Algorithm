@@ -21,31 +21,16 @@ public class Main {
                 }
             }
 
-            // 누적합
-            int[][] sums = new int[n + 1][m + 1];
-            for (int i = 1; i <= n; i++) {
-                for (int j = 1; j <= m; j++) {
-                    sums[i][j] = sums[i - 1][j] + sums[i][j - 1] - sums[i - 1][j - 1] + map[i][j];
-                }
-            }
-
+            // dp : i,j까지 가장 큰 정사각형 with 모두 1인
+            // 현재가 1이라면 좌, 상, 대각의 min값(정사각형을 만들기 위해) +1
+            // 현재가 0이라면 0
+            int[][] dp = new int[n+1][m+1];
             int maxSize = 0;
-            // 정사각형으로 탐색
-            for (int sx = 1; sx <= n; sx++) {
-                for (int sy = 1; sy <= m; sy++) {
-                    for (int k = 0; k + sx <= n && k + sy <=m; k++) { // 대각 끝 좌표
-                        int ex = sx + k;
-                        int ey = sy + k;
-                        int size = ex - sx + 1;
-
-                        // 1로 채워진 정사각형인지 확인
-                        int partSum = sums[ex][ey] - sums[sx - 1][ey] - sums[ex][sy - 1] + sums[sx - 1][sy - 1];
-                        if (partSum == size * size) {
-                            // 가장 큰 size 업데이트
-                            maxSize = Math.max(maxSize, size);
-                        }else{
-                            break;
-                        }
+            for(int i=1;i<=n;i++){
+                for(int j=1;j<=m;j++){
+                    if(map[i][j] == 1){
+                        dp[i][j] = Math.min(dp[i-1][j-1], Math.min(dp[i-1][j], dp[i][j-1])) + 1;
+                        maxSize = Math.max(maxSize,dp[i][j]);
                     }
                 }
             }
