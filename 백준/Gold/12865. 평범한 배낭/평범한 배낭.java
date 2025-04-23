@@ -1,34 +1,25 @@
-import java.io.*;
 import java.util.*;
-
+import java.io.*;
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String args[]) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
-        int bagWeight = Integer.parseInt(st.nextToken());
-
-        int[][] goods = new int[n+1][2];
+        int k = Integer.parseInt(st.nextToken());  // 배낭 무게
+        int[][] items = new int[n+1][2];
         for(int i=1;i<=n;i++){
             st = new StringTokenizer(br.readLine());
-            int w = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-            goods[i][0] = w;
-            goods[i][1] = v;
+            items[i][0] = Integer.parseInt(st.nextToken());
+            items[i][1] = Integer.parseInt(st.nextToken());
         }
-
-
-        int[] dp = new int[bagWeight+1];
-        // 현재 물건을 넣기 : 현재 물건의 가치 + dp[i-현재 물건의 w] : v + dp[i-1][j-w]
-        // 현재 물건 안 넣기 : dp[이전 물건까지의 가치]             : dp[i-1][j];
-        // 이 중 가장 큰 것
+        int[] dp = new int[k+1];
         for(int i=1;i<=n;i++){
-            int w = goods[i][0];
-            int v = goods[i][1];
-            for(int j=bagWeight;j>=w;j--){
-                if(j-w>=0) dp[j] = Math.max(v + dp[j-w], dp[j]);
+            int w = items[i][0];
+            int v = items[i][1];
+            for(int j=k;j-w>=0;j--){
+                dp[j] = Math.max(dp[j], dp[j-w] + v);
             }
         }
-        System.out.println(dp[bagWeight]);
+        System.out.println(dp[k]);
     }
 }
