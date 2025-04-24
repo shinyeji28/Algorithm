@@ -9,20 +9,21 @@ public class Main {
         for(int i=0;i<n;i++){
             arr[i] = Integer.parseInt(st.nextToken());
         }
-        List<Integer> lis = new ArrayList<>();
-        lis.add(arr[0]);
+        int[] lis = new int[n];
+        lis[0] = arr[0];
+        int lisIdx = 0;
 
         for(int i=1;i<n;i++){
-            int idx = Collections.binarySearch(lis, arr[i]);
+            int idx = Arrays.binarySearch(lis,0, lisIdx+1, arr[i]);
             if(idx<0) {
                 idx = idx * (-1) -1;
-                if(idx == lis.size()){
-                    lis.add(arr[i]);
-                }else lis.set(idx, arr[i]);
+                if(idx == lisIdx+1){
+                    lisIdx++;
+                    lis[lisIdx] = arr[i];
+                }else lis[idx] = arr[i];
             }
-
         }
-        System.out.println(lis.size());
+        System.out.println(lisIdx+1);
 
     }
 }
