@@ -1,11 +1,12 @@
-with allCounts as(
-    select distinct count(*) as cnt
-    from USER_INFO
-    where year(joined) = '2021'
-)
+SELECT YEAR(O.SALES_DATE) YEAR, MONTH(O.SALES_DATE) MONTH, COUNT(DISTINCT U.USER_ID) AS PURCHASED_USERS, ROUND(COUNT(DISTINCT U.USER_ID) / (
+    SELECT COUNT(DISTINCT U.USER_ID)
+    FROM USER_INFO U
+    WHERE U.JOINED BETWEEN '2021-01-01' AND '2021-12-31'
+),1) as PUCHASED_RATIO
+FROM USER_INFO U JOIN ONLINE_SALE O ON U.USER_ID = O.USER_ID  -- 상품 구매한 사람들
+WHERE U.JOINED BETWEEN '2021-01-01' AND '2021-12-31'
+GROUP BY YEAR(O.SALES_DATE), MONTH(O.SALES_DATE)
+ORDER BY 1,2;
 
-select year(o.SALES_DATE) as YEAR , month(o.SALES_DATE) as MONTH, count(distinct u.user_id) as PURCHASED_USERS ,round(count(distinct u.user_id)/a.cnt,1) as PUCHASED_RATIO
-from USER_INFO u join ONLINE_SALE o on u.user_id = o.user_id, allCounts a
-where year(u.joined) = '2021'
-group by year(o.SALES_DATE) , month(o.SALES_DATE)
-order by 1,2;
+
+
